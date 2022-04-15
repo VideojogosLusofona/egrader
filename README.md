@@ -31,6 +31,7 @@ git clone https://github.com/VideojogosLusofona/lp1_exercise_grader.git
 cd lp1_exercise_grader
 python -m venv env
 source env/bin/activate
+pip install --upgrade pip
 pip install -e .[dev]
 ```
 
