@@ -1,7 +1,7 @@
 class Project:
     """A project implemented (or not) by a student."""
 
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         self.name = name
         self.exists = False
         self.exists_in_solution = False
