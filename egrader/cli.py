@@ -1,5 +1,7 @@
 import argparse
+import sys
 from pathlib import Path
+
 
 def main():
     """
@@ -7,24 +9,56 @@ def main():
     """
 
     # Create an argument parser
-    parser = argparse.ArgumentParser(description='Exercise Grader.',
-                                    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description="Exercise Grader.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+    )
 
     # Specify arguments to parse
-    parser.add_argument('-r', '--repos', type=str, metavar='<REPOS FILE>',
-                        help='Student repositories file in TSV format',
-                        default='repos.tsv')
-    parser.add_argument('-a', '--assessment', type=str, metavar='<RULES FILE>',
-                        help='Assessment rules in YAML format',
-                        default='rules.yml')
-    parser.add_argument('-o', '--output-folder', type=str, metavar='<OUTPUT FOLDER>',
-                        help='Output folder',
-                        default=Path('out'))
+    parser.add_argument(
+        "-g",
+        "--git-urls",
+        type=str,
+        metavar="<GIT URLS FILE>",
+        help="Student public Git account URLs file in TSV format",
+        required=True,
+    )
+    parser.add_argument(
+        "-r",
+        "--rules",
+        type=str,
+        metavar="<RULES FILE>",
+        help="Assessment rules in YAML format",
+        required=True,
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        metavar="<OUTPUT FOLDER>",
+        help="Output folder",
+        required=True,
+    )
 
     # Parse and validate command line arguments
     args = parser.parse_args()
 
-    # Show args
-    print("-s", args.repos)
-    print("-a", args.assessment)
-    print("-o", args.output_folder)
+    # Create file paths
+    git_urls_file = Path(args.git_urls)
+    rules_file = Path(args.rules)
+    output_folder = Path(args.output)
+
+    # Check if Git URLs file exists, and if not, quit
+    if not git_urls_file.exists():
+        print(f"File '{git_urls_file}' does not exist!", file=sys.stderr)
+        exit(1)
+
+    # Check if rules file exists, and if not, quit
+    if not rules_file.exists():
+        print(f"File '{rules_file}' does not exist!", file=sys.stderr)
+        exit(2)
+
+    # Check if output folder exists, and if not, create it
+    if not output_folder.exists():
+        Path.mkdir(output_folder)
+
