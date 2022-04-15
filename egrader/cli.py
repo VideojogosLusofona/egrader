@@ -2,6 +2,12 @@ import argparse
 import sys
 from pathlib import Path
 
+from egrader.Student import Student
+
+ERR_GIT_URLS_FILE_NOT_EXIST = 1
+ERR_RULES_FILE_NOT_EXIST = 2
+ERR_GIT_URLS_FILE_INVALID = 3
+
 
 def main():
     """
@@ -51,14 +57,26 @@ def main():
     # Check if Git URLs file exists, and if not, quit
     if not git_urls_file.exists():
         print(f"File '{git_urls_file}' does not exist!", file=sys.stderr)
-        exit(1)
+        exit(ERR_GIT_URLS_FILE_NOT_EXIST)
 
     # Check if rules file exists, and if not, quit
     if not rules_file.exists():
         print(f"File '{rules_file}' does not exist!", file=sys.stderr)
-        exit(2)
+        exit(ERR_RULES_FILE_NOT_EXIST)
 
     # Check if output folder exists, and if not, create it
     if not output_folder.exists():
         Path.mkdir(output_folder)
 
+    # Create student list with respective URLs
+    students = []
+    with open(git_urls_file) as gufile:
+        for line in gufile:
+            std_url = line.split(maxsplit=2)
+            if len(std_url) != 2:
+                print(
+                    f"File '{git_urls_file}' is not properly formatted!",
+                    file=sys.stderr,
+                )
+                exit(ERR_GIT_URLS_FILE_INVALID)
+            students.append(Student(std_url[0], std_url[1]))
