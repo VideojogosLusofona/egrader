@@ -1,4 +1,4 @@
-class Repo:
+class Reposit:
     """A student repository, corresponds to a C# solution."""
 
     def __init__(self, name):
