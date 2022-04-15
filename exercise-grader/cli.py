@@ -3,7 +3,7 @@ from pathlib import Path
 
 def main():
     """
-    This function is called when the script is invoked with the `lp1grader` command.
+    This function is called when the script is invoked with the `egrader` command.
     """
 
     # Create an argument parser

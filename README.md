@@ -1,6 +1,6 @@
-# LP1 Exercise Grader
+# Exercise Grader
 
-Grade LP1 exercises done in exercise lectures.
+Auto-grade simple programming exercises.
 
 ## How to use
 
@@ -13,22 +13,22 @@ TODO
 Directly using pip:
 
 ```text
-pip install git+https://github.com/VideojogosLusofona/lp1_exercise_grader.git#egg=lp1_exercise_grader
+pip install git+https://github.com/VideojogosLusofona/exercise-grader.git#egg=exercise-grader
 ```
 
 Or each step at a time:
 
 ```text
-git clone https://github.com/VideojogosLusofona/lp1_exercise_grader.git
-cd lp1_exercise_grader
+git clone https://github.com/VideojogosLusofona/exercise-grader.git
+cd exercise-grader
 pip install .
 ```
 
 ### Installing for development and/or improving the package
 
 ```text
-git clone https://github.com/VideojogosLusofona/lp1_exercise_grader.git
-cd lp1_exercise_grader
+git clone https://github.com/VideojogosLusofona/exercise-grader.git
+cd exercise-grader
 python -m venv env
 source env/bin/activate
 pip install --upgrade pip
