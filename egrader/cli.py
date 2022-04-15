@@ -7,7 +7,7 @@ def main():
     """
 
     # Create an argument parser
-    parser = argparse.ArgumentParser(description='LP1 Exercise Grader.',
+    parser = argparse.ArgumentParser(description='Exercise Grader.',
                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     # Specify arguments to parse
