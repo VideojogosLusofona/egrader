@@ -80,3 +80,7 @@ def main():
                 )
                 exit(ERR_GIT_URLS_FILE_INVALID)
             students.append(Student(std_url[0], std_url[1]))
+
+    # Show validity of students' URLs
+    for s in students:
+        print(s.sid, s.git_url, s.valid_url)
