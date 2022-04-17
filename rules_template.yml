@@ -1,0 +1,19 @@
+- !Repository
+  name: LP1Semana01
+  checks:
+  - check_exists
+  - check_num_commits
+  - check_commit_msg_pten
+  - check_github_noreply_email
+  - check_date_interval:
+      start: 298347238974TZ
+      end: 234234235235TZ
+  problems:
+  - name: Exercise01
+    checks:
+    - check_exists
+    - check_cs_build
+    - check_cs_runs
+    - check_cs_output_match: |
+        something to
+        match
