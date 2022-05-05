@@ -92,6 +92,7 @@ def main():
     if results_file.exists():
         # Load results from results file
         results = yaml.safe_load(results_file.read_text())
+
     else:
         # Generate new results
 
@@ -121,3 +122,7 @@ def main():
     # Show validity of students' URLs
     for s in results.students:
         print(s.sid, s.git_url, s.valid_url)
+
+    # Open rules file
+    with open(rules_file, 'r') as rf:
+        rules = yaml.safe_load(rf)
