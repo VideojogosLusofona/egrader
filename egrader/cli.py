@@ -5,6 +5,7 @@ from pathlib import Path
 import yaml
 
 from .Results import Results
+from .Repository import Repository
 from .Student import Student
 
 ERR_GIT_URLS_FILE_NOT_EXIST = 1
@@ -116,13 +117,15 @@ def main():
                 students.append(student)
 
         # Create and save results
-        results = Results(students)
-        print(yaml.dump(results), file=open(results_file, "w"))
-
-    # Show validity of students' URLs
-    for s in results.students:
-        print(s.sid, s.git_url, s.valid_url)
+        print(yaml.dump(students), file=open(results_file, "w"))
 
     # Open rules file
     with open(rules_file, 'r') as rf:
         rules = yaml.safe_load(rf)
+
+    # Cycle through students
+    for s in students:
+        # Show validity of students' URLs
+        print(s.sid, s.git_url, s.valid_url)
+
+        # Does the student URL contain
