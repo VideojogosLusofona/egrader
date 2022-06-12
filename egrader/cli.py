@@ -1,4 +1,14 @@
 import argparse
+from pathlib import Path
+import shutil
+
+OPT_E_SHORT = "-e"
+OPT_E_LONG = "--existing"
+OPT_E_STOP = "stop"
+OPT_E_UPDT = "update"
+OPT_E_OVWR = "overwrite"
+
+FILE_REPO_REGISTRY = "repos.yml"
 
 
 def main():
@@ -23,10 +33,10 @@ def main():
         help="Fetch all repositories"
     )
     parser_fetch.add_argument(
-        "-e", "--existing",
-        choices=["stop", "update", "overwrite"],
-        help="Action to take when fetch has already been performed before (default: stop)",
-        default="stop"
+        OPT_E_SHORT, OPT_E_LONG,
+        choices=[OPT_E_STOP, OPT_E_UPDT, OPT_E_OVWR],
+        help=f"Action to take when fetch has already been performed before (default: {OPT_E_STOP})",
+        default=OPT_E_STOP
     )
 
     parser_fetch.add_argument(
@@ -76,8 +86,29 @@ def main():
 
 
 def fetch(args):
-    print("FETCH!")
-    print(args)
+
+    # Create file paths
+    urls_file = Path(args.urls_file)
+    rules_file = Path(args.rules_file)
+    if args.output_folder != None:
+        output_folder = Path(args.output)
+    else:
+        output_folder = rules_file.stem
+
+    if output_folder.exists():
+        if args.choice == OPT_E_STOP:
+            print("Output folder already exists, stopping operation.")
+            print(f"To continue anyway see the {OPT_E_SHORT}/{OPT_E_LONG} option.")
+            return
+        elif args.choice == OPT_E_OVWR:
+            print("Output folder already exists, deleting it...")
+            shutil.rmdir(output_folder)
+            output_folder.mkdir()
+    else:
+        output_folder.mkdir()
+
+    repo_registry_file = Path(args.output, FILE_REPO_REGISTRY)
+
 
 
 def assess(args):
