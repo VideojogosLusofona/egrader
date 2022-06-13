@@ -5,7 +5,9 @@ import shutil
 import sys
 from typing import Any
 
+import sh
 import yaml
+from yarl import URL
 
 from .Student import Student
 
@@ -16,6 +18,7 @@ OPT_E_UPDT = "update"
 OPT_E_OVWR = "overwrite"
 
 FILE_VALIDATED_GIT_URLS = "validated_git_urls.yml"
+FOLDER_STUDENTS = "students"
 
 
 def main():
@@ -99,7 +102,7 @@ def main():
     # Invoke function to perform selected command
     try:
         args.func(args)
-    except (FileNotFoundError, FileExistsError, SyntaxError) as e:
+    except (FileNotFoundError, FileExistsError, SyntaxError, sh.ErrorReturnCode) as e:
         print(e.args[0], file=sys.stderr)
         if (args.debug):
             print("-------- Exception details --------", file=sys.stderr)
@@ -111,7 +114,7 @@ def main():
 
 
 def fetch(args) -> None:
-    """Fetch operation: clone or update all repositories."""
+    """Fetch operation: verify Git URLs, clone or update all repositories."""
 
     # Create file paths
     urls_fp = Path(args.urls_file[0])
@@ -169,11 +172,68 @@ def fetch(args) -> None:
         # Otherwise load info from original file and validate URLs
         students = load_urls(urls_fp)
 
-        # Save validated URLs to avoid rechecking them later with the "-e update"
-        # option
-        save_yaml(validated_urls_fp, students)
+    # Clone or update student repositories
+    fetch_repos(output_fp, students, repo_rules.keys())
+
+    # Save validated URLs and repositories to avoid rechecking them later with
+    # the "-e update" option
+    save_yaml(validated_urls_fp, students)
 
     print(students)
+
+
+def fetch_repos(base_fp: Path, students: Sequence[Student], repos: Sequence[str]):
+    """Clone or update student repositories"""
+
+    # Loop through students
+    for student in students:
+        if student.valid_url:
+
+            # Determine path where to place student repos
+            student_path = base_fp.joinpath(student.sid)
+
+            # Loop through mandated repos
+            for repo_name in repos:
+
+                # Determine repo URL and local path
+                repo_url =  URL(student.git_url) / repo_name
+                repo_path = student_path.joinpath(repo_name)
+
+                # Does the repository already exist?
+                if repo_path.exists():
+
+                    # Path exists, only update repository
+                    git_cmd("-C", repo_path, "pull")
+
+                    # Add repo location to student object
+                    student.add_repo(repo_name, str(repo_path))
+
+                else:
+
+                    # Repository doesn't exist, do a full clone
+                    try:
+                        git_cmd("clone", repo_url, repo_path)
+
+                    except GitException:
+                        # If a GitException occurs, assume the repo doesn't exist
+                        pass
+
+                    else:
+                        # Otherwise add repo location to student object
+                        student.add_repo(repo_name, str(repo_path))
+
+
+class GitException(Exception):
+    """Exception raised when a Git command fails"""
+
+
+def git_cmd(*args):
+    try:
+        sh.git(*args)
+    except sh.ErrorReturnCode as erc:
+        raise GitException(
+            f"The following error occurred when executing the '{erc.full_cmd}' command:"\
+            f"\n\n{erc.stderr.decode('UTF-8')}") from erc
 
 
 def assess(args) -> None:
@@ -196,6 +256,7 @@ def save_yaml(yaml_fp: Path, data: Any) -> None:
     """Save a yaml file"""
 
     yaml_text = yaml.dump(data)
+    print(yaml_text)
     print(yaml_text, file=open(yaml_fp, "w"))
 
 
@@ -205,7 +266,7 @@ def check_required_fp_exists(fp_to_check: Path) -> None:
         raise FileNotFoundError(f"File '{fp_to_check}' does not exist!")
 
 
-def load_urls(urls_fp: Path) -> Sequence[Student]:
+def load_urls(urls_fp: Path) -> list[Student]:
     """Load student Git URLs"""
 
     # The student list, initially empty

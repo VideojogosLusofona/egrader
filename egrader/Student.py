@@ -15,6 +15,7 @@ class Student(YAMLObject):
         self.sid = sid
         self.git_url = git_url
         self.valid_url = False
+        self.repos = {}
 
         # Check if URL is well-formed
         if validators.url(self.git_url):
@@ -31,6 +32,6 @@ class Student(YAMLObject):
             self.repos
         )
 
-    def add_repo(self, repo):
-        self.repos[repo.name] = repo
+    def add_repo(self, repo_name, repo_path):
+        self.repos[repo_name] = repo_path
 
