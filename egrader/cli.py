@@ -90,7 +90,7 @@ def main():
     # Invoke function to perform selected command
     try:
         args.func(args)
-    except (FileNotFoundError, FileExistsError) as e:
+    except (FileNotFoundError, FileExistsError, SyntaxError) as e:
         print(e.args[0], file=sys.stderr)
         # print(getattr(e, "message", repr(e)), file=sys.stderr)
         return 1
@@ -161,15 +161,34 @@ def check_required_file_exists(file_to_check: Path) -> None:
 def load_urls(urls_file: Path) -> Sequence[Student]:
     """Load student Git URLs"""
 
-    students: List[Student] = []
+    # The student list, initially empty
+    students: list[Student] = []
 
+    # Open Git URLs file
     with open(urls_file) as ufile:
-        for line in ufile:
-            std_url = line.split(maxsplit=2)
+
+        # Cycle through each line of the file
+        for lno, line in enumerate(ufile, 1):
+
+            # Remove leading and trailing whitespace
+            line = line.strip()
+
+            # Ignore line if it's empty or starts with # (comment)
+            if len(line) == 0 or line[0] == '#':
+                continue
+
+            # Split line and check that it's composed of two chunks
+            std_url = line.split()
             if len(std_url) != 2:
-                raise SyntaxError(f"File '{urls_file}' is not properly formatted!")
+                raise SyntaxError(f"Syntax error in line {lno} of {urls_file}: "\
+                    f"'{line}'")
+
+            # Create a student instance with it's ID and URL, taken from the line
             student = Student(std_url[0], std_url[1])
+
+            # Append new student to the student list
             students.append(student)
 
+    # Return students
     return students
 
