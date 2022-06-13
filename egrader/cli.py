@@ -1,8 +1,12 @@
 import argparse
+from collections.abc import Sequence
 from pathlib import Path
 import shutil
 import sys
+
 import yaml
+
+from .Student import Student
 
 OPT_E_SHORT = "e"
 OPT_E_LONG = "existing"
@@ -97,7 +101,7 @@ def main():
         return 0
 
 
-def fetch(args):
+def fetch(args) -> None:
     """Fetch operation: clone or update all repositories."""
 
     # Create file paths
@@ -137,16 +141,35 @@ def fetch(args):
     with open(rules_file, 'r') as rf:
         repo_rules = yaml.safe_load(rf)
 
+    # Load student Git URLs
+    students = load_urls(urls_file)
+
 
     #repo_registry_file = Path(args.output, FILE_REPO_REGISTRY)
 
-def assess(args):
+def assess(args) -> None:
     print("ASSESS!")
     print(args)
 
 
-def check_required_file_exists(file_to_check: Path):
+def check_required_file_exists(file_to_check: Path) -> None:
     """ Check if file exists, and if not, quit"""
     if not file_to_check.exists():
         raise FileNotFoundError(f"File '{file_to_check}' does not exist!")
+
+
+def load_urls(urls_file: Path) -> Sequence[Student]:
+    """Load student Git URLs"""
+
+    students: List[Student] = []
+
+    with open(urls_file) as ufile:
+        for line in ufile:
+            std_url = line.split(maxsplit=2)
+            if len(std_url) != 2:
+                raise SyntaxError(f"File '{urls_file}' is not properly formatted!")
+            student = Student(std_url[0], std_url[1])
+            students.append(student)
+
+    return students
 
