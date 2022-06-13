@@ -1,10 +1,14 @@
-- !Repository
-  name: LP1Semana01
+LP1Aula01:
+  assess_weight: 0.5
   checks:
-  - check_exists
   - check_num_commits
-  - check_commit_msg_pten
-  - check_github_noreply_email
+LP1Semana01:
+  assess_weight: 0.5
+  checks:
+  - check_num_commits
+
+  # - check_commit_msg_pten
+  # - check_github_noreply_email
   # - check_date_interval:
   #     start: 298347238974TZ
   #     end: 234234235235TZ
