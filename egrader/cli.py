@@ -1,8 +1,8 @@
 import argparse
-from collections.abc import Sequence
-from pathlib import Path
 import shutil
 import sys
+from collections.abc import Sequence
+from pathlib import Path
 from typing import Any
 
 import sh
@@ -36,63 +36,53 @@ def main():
     parser.add_argument(
         "--debug",
         action="store_true",
-        help="show complete exception traceback when an error occurs"
+        help="show complete exception traceback when an error occurs",
     )
 
     # Allow for subcommands
-    subparsers = parser.add_subparsers(
-        title="commands",
-        required=True
-    )
+    subparsers = parser.add_subparsers(title="commands", required=True)
 
     # Create the parser for the "fetch" command
-    parser_fetch = subparsers.add_parser(
-        "fetch",
-        help="fetch all repositories"
-    )
+    parser_fetch = subparsers.add_parser("fetch", help="fetch all repositories")
     parser_fetch.add_argument(
-        f"-{OPT_E_SHORT}", f"--{OPT_E_LONG}",
+        f"-{OPT_E_SHORT}",
+        f"--{OPT_E_LONG}",
         choices=[OPT_E_STOP, OPT_E_UPDT, OPT_E_OVWR],
-        help=f"action to take when fetch has already been performed before (default: {OPT_E_STOP})",
-        default=OPT_E_STOP
+        help="action to take when fetch has already been performed before "
+        f"(default: {OPT_E_STOP})",
+        default=OPT_E_STOP,
     )
 
     parser_fetch.add_argument(
         "urls_file",
         metavar="URLS",
         help="student public Git account URLs file in TSV format",
-        nargs=1
+        nargs=1,
     )
     parser_fetch.add_argument(
-        "rules_file",
-        metavar="RULES",
-        help="assessment rules in YAML format",
-        nargs=1
+        "rules_file", metavar="RULES", help="assessment rules in YAML format", nargs=1
     )
     parser_fetch.add_argument(
         "output_folder",
         metavar="OUTPUT",
         help="output folder (defaults to RULES minus yaml extension)",
-        nargs='?'
+        nargs="?",
     )
     parser_fetch.set_defaults(func=fetch)
 
     # Create the parser for the "assess" command
-    parser_assess = subparsers.add_parser(
-        "assess",
-        help="perform assessment"
-    )
+    parser_assess = subparsers.add_parser("assess", help="perform assessment")
     parser_assess.add_argument(
         "rules_file",
         type=str,
         metavar="<RULES_FILE>",
-        help="assessment rules in YAML format"
+        help="assessment rules in YAML format",
     )
     parser_assess.add_argument(
         "output_folder",
         metavar="OUTPUT",
         help="output folder (defaults to RULES minus yaml extension)",
-        nargs='?'
+        nargs="?",
     )
     parser_assess.set_defaults(func=assess)
 
@@ -104,7 +94,7 @@ def main():
         args.func(args)
     except (FileNotFoundError, FileExistsError, SyntaxError, sh.ErrorReturnCode) as e:
         print(e.args[0], file=sys.stderr)
-        if (args.debug):
+        if args.debug:
             print("-------- Exception details --------", file=sys.stderr)
             raise e
         return 1
@@ -128,7 +118,7 @@ def fetch(args) -> None:
 
     # Determine output folder, either given by user or we extract it from the
     # rules file name
-    if args.output_folder != None:
+    if args.output_folder is not None:
         output_fp = Path(args.output)
     else:
         output_fp = Path(f"out_{rules_fp.stem}")
@@ -143,10 +133,12 @@ def fetch(args) -> None:
         if getattr(args, OPT_E_LONG) == OPT_E_STOP:
 
             # Stop processing
-            raise FileExistsError("Output folder already exists, stopping operation. "\
-                f"Check the -{OPT_E_SHORT}/--{OPT_E_LONG} option for alternative behavior.")
+            raise FileExistsError(
+                "Output folder already exists, stopping operation. Check the "
+                f"-{OPT_E_SHORT}/--{OPT_E_LONG} option for alternative behavior."
+            )
 
-        elif  getattr(args, OPT_E_LONG) == OPT_E_OVWR:
+        elif getattr(args, OPT_E_LONG) == OPT_E_OVWR:
 
             # Delete folder and its contents and recreate it
             print("Output folder already exists, deleting it...")
@@ -196,7 +188,7 @@ def fetch_repos(base_fp: Path, students: Sequence[Student], repos: Sequence[str]
             for repo_name in repos:
 
                 # Determine repo URL and local path
-                repo_url =  URL(student.git_url) / repo_name
+                repo_url = URL(student.git_url) / repo_name
                 repo_path = student_path.joinpath(repo_name)
 
                 # Does the repository already exist?
@@ -214,7 +206,7 @@ def fetch_repos(base_fp: Path, students: Sequence[Student], repos: Sequence[str]
                     try:
                         git_cmd("clone", repo_url, repo_path)
 
-                    except GitException:
+                    except GitError:
                         # If a GitException occurs, assume the repo doesn't exist
                         pass
 
@@ -223,17 +215,18 @@ def fetch_repos(base_fp: Path, students: Sequence[Student], repos: Sequence[str]
                         student.add_repo(repo_name, str(repo_path))
 
 
-class GitException(Exception):
-    """Exception raised when a Git command fails"""
+class GitError(Exception):
+    """Error raised when a Git command fails"""
 
 
 def git_cmd(*args):
     try:
         sh.git(*args)
     except sh.ErrorReturnCode as erc:
-        raise GitException(
-            f"The following error occurred when executing the '{erc.full_cmd}' command:"\
-            f"\n\n{erc.stderr.decode('UTF-8')}") from erc
+        raise GitError(
+            f"The following error occurred when executing the '{erc.full_cmd}' command:"
+            f"\n\n{erc.stderr.decode('UTF-8')}"
+        ) from erc
 
 
 def assess(args) -> None:
@@ -250,7 +243,9 @@ def load_yaml(yaml_fp: Path, safe: bool = True) -> Any:
             else:
                 yaml_obj = yaml.load(yaml_file, yaml.CLoader)
     except yaml.scanner.ScannerError as se:
-        raise SyntaxError(f"Syntax error{se.problem_mark} {se.context}: {se.problem}") from se
+        raise SyntaxError(
+            f"Syntax error{se.problem_mark} {se.context}: {se.problem}"
+        ) from se
 
     return yaml_obj
 
@@ -259,12 +254,12 @@ def save_yaml(yaml_fp: Path, data: Any) -> None:
     """Save a yaml file"""
 
     yaml_text = yaml.dump(data, Dumper=yaml.CDumper)
-    print(yaml_text)
-    print(yaml_text, file=open(yaml_fp, "w"))
+    with open(yaml_fp, "w") as yaml_file:
+        print(yaml_text, file=yaml_file)
 
 
 def check_required_fp_exists(fp_to_check: Path) -> None:
-    """ Check if file path exists, and if not, raise exception"""
+    """Check if file path exists, and if not, raise exception"""
     if not fp_to_check.exists():
         raise FileNotFoundError(f"File '{fp_to_check}' does not exist!")
 
@@ -285,14 +280,15 @@ def load_urls(urls_fp: Path) -> list[Student]:
             line = line.strip()
 
             # Ignore line if it's empty or starts with # (comment)
-            if len(line) == 0 or line[0] == '#':
+            if len(line) == 0 or line[0] == "#":
                 continue
 
             # Split line and check that it's composed of two chunks
             std_url = line.split()
             if len(std_url) != 2:
-                raise SyntaxError(f"Syntax error in line {lno} of {urls_fp}: "\
-                    f"'{line}'")
+                raise SyntaxError(
+                    f"Syntax error in line {lno} of {urls_fp}: " f"'{line}'"
+                )
 
             # Create a student instance with it's ID and URL, taken from the line
             student = Student(std_url[0], std_url[1])
@@ -302,4 +298,3 @@ def load_urls(urls_fp: Path) -> list[Student]:
 
     # Return students
     return students
-

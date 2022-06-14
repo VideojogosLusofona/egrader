@@ -12,11 +12,12 @@ class Student:
         self.valid_url = False
         self.repos = {}
 
-        # Check if URL is well-formed
-        if validators.url(self.git_url):
-            # Check if URL exists (200)
-            if requests.head(self.git_url).status_code < 400:
-                self.valid_url = True
+        # Validate URL if it's is well-formed and if it exists (200)
+        if (
+            validators.url(self.git_url)
+            and requests.head(self.git_url).status_code < 400
+        ):
+            self.valid_url = True
 
     def __repr__(self):
         return "%s(sid=%r, git_url=%r, valid_url=%r, repos=%r)" % (
@@ -24,9 +25,8 @@ class Student:
             self.sid,
             self.git_url,
             self.valid_url,
-            self.repos
+            self.repos,
         )
 
     def add_repo(self, repo_name, repo_path):
         self.repos[repo_name] = repo_path
-

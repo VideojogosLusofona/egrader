@@ -19,5 +19,5 @@ class Check(YAMLObject):
             self.__class__.__name__,
             self.name,
             self.result,
-            self.message
+            self.message,
         )
