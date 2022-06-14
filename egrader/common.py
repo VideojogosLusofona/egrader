@@ -1,6 +1,15 @@
 import requests
 import validators
 
+OPT_E_SHORT = "e"
+OPT_E_LONG = "existing"
+OPT_E_STOP = "stop"
+OPT_E_UPDT = "update"
+OPT_E_OVWR = "overwrite"
+
+FILE_VALIDATED_GIT_URLS = "validated_git_urls.yml"
+FOLDER_STUDENTS = "students"
+
 
 class Student:
     """A student and his repositories."""
