@@ -165,7 +165,7 @@ def fetch(args) -> None:
 
         # If file with validated URLs already exists, load info from there to
         # avoid rechecking the URLs (only with "-e update" option)
-        students = load_yaml(validated_urls_fp)
+        students = load_yaml(validated_urls_fp, safe=False)
 
     else:
 
@@ -241,11 +241,14 @@ def assess(args) -> None:
     print(args)
 
 
-def load_yaml(yaml_fp: Path) -> Any:
+def load_yaml(yaml_fp: Path, safe: bool = True) -> Any:
     """Load a yaml file"""
     try:
         with open(yaml_fp, "r") as yaml_file:
-            yaml_obj = yaml.safe_load(yaml_file)
+            if safe:
+                yaml_obj = yaml.safe_load(yaml_file)
+            else:
+                yaml_obj = yaml.load(yaml_file, yaml.CLoader)
     except yaml.scanner.ScannerError as se:
         raise SyntaxError(f"Syntax error{se.problem_mark} {se.context}: {se.problem}") from se
 
@@ -255,7 +258,7 @@ def load_yaml(yaml_fp: Path) -> Any:
 def save_yaml(yaml_fp: Path, data: Any) -> None:
     """Save a yaml file"""
 
-    yaml_text = yaml.dump(data)
+    yaml_text = yaml.dump(data, Dumper=yaml.CDumper)
     print(yaml_text)
     print(yaml_text, file=open(yaml_fp, "w"))
 

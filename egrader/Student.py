@@ -1,14 +1,9 @@
 import requests
 import validators
-from yaml import SafeLoader, YAMLObject
 
 
-class Student(YAMLObject):
+class Student:
     """A student and his repositories."""
-
-    yaml_tag = "!Student"
-    yaml_loader = SafeLoader
-    repos = {}
 
     def __init__(self, sid, git_url):
         # Set instance variables
