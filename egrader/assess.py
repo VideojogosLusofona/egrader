@@ -1,3 +1,4 @@
+from importlib.metadata import entry_points
 from pathlib import Path
 
 from .common import check_required_fp_exists, get_output_fp, get_valid_student_urls_fp
@@ -32,5 +33,11 @@ def assess(args) -> None:
     # Load student list and their URLs
     students = load_yaml(student_urls_fp, safe=False)
 
+    # Load assessment plugins
+    assess_plugins = entry_points(group="egrader.assess")
+
     print(rules)
+    print()
     print(students)
+    print()
+    print(assess_plugins)
