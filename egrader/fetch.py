@@ -13,7 +13,7 @@ from .common import (
     OPT_E_STOP,
     Student,
 )
-from .git import GitError, git_cmd
+from .git import GitError, git_cmd, git_cmd_at
 from .yaml import load_yaml, save_yaml
 
 
@@ -109,7 +109,7 @@ def fetch_repos(base_fp: Path, students: Sequence[Student], repos: Sequence[str]
                 if repo_path.exists():
 
                     # Path exists, only update repository
-                    git_cmd("-C", repo_path, "pull")
+                    git_cmd_at(repo_path, "pull")
 
                     # Add repo location to student object
                     student.add_repo(repo_name, str(repo_path))
