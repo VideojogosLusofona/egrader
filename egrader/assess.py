@@ -36,11 +36,22 @@ def assess(args) -> None:
     # Load assessment plugins
     assess_plugins = entry_points(group="egrader.assess")
 
+    # Create a set of all required assessments
+    required_assessments = set()
+    for rule in rules:
+        for assessment in rule["assessments"]:
+            required_assessments.add(assessment["name"])
+
+    # Load required assessment plugins as specified by the rules
     assess_functions = {}
-
     for ap in assess_plugins:
-        assess_functions[ap.name] = ap.load()
+        if ap.name in required_assessments:
+            assess_functions[ap.name] = ap.load()
+        else:
+            # TODO Raise error
+            pass
 
+    # Apply rules and assessments to each student
     for student in students:
         for rule in rules:
             if rule["repo"] in student.repos:
