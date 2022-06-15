@@ -62,7 +62,7 @@ def main():
     parser_assess.add_argument(
         "rules_file",
         type=str,
-        metavar="<RULES_FILE>",
+        metavar="RULES",
         help="assessment rules in YAML format",
     )
     parser_assess.add_argument(
