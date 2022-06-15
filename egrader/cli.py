@@ -60,10 +60,7 @@ def main():
     # Create the parser for the "assess" command
     parser_assess = subparsers.add_parser("assess", help="perform assessment")
     parser_assess.add_argument(
-        "rules_file",
-        type=str,
-        metavar="RULES",
-        help="assessment rules in YAML format",
+        "rules_file", metavar="RULES", help="assessment rules in YAML format", nargs=1
     )
     parser_assess.add_argument(
         "output_folder",
