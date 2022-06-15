@@ -6,14 +6,15 @@ from typing import List
 from yarl import URL
 
 from .common import (
-    FILE_VALIDATED_GIT_URLS,
     OPT_E_LONG,
     OPT_E_OVWR,
     OPT_E_SHORT,
     OPT_E_STOP,
     Student,
+    check_required_fp_exists,
     get_output_fp,
     get_student_repo_fp,
+    get_valid_urls_yaml_fp,
 )
 from .git import GitError, git, git_at
 from .yaml import load_yaml, save_yaml
@@ -22,9 +23,9 @@ from .yaml import load_yaml, save_yaml
 def fetch(args) -> None:
     """Fetch operation: verify Git URLs, clone or update all repositories."""
 
-    # Create file paths
-    urls_fp = Path(args.urls_file[0])
-    rules_fp = Path(args.rules_file[0])
+    # Determine file paths for Git URLs and rules files
+    urls_fp: Path = Path(args.urls_file[0])
+    rules_fp: Path = Path(args.rules_file[0])
 
     # Check if Git URLs file exists, and if not, quit
     check_required_fp_exists(urls_fp)
@@ -36,8 +37,8 @@ def fetch(args) -> None:
     # rules file name
     output_fp: Path = get_output_fp(args.output_folder, rules_fp)
 
-    # Create file path for validated URLs yaml file
-    validated_urls_fp = output_fp.joinpath(FILE_VALIDATED_GIT_URLS)
+    # Determine file path for validated URLs yaml file
+    validated_urls_fp: Path = get_valid_urls_yaml_fp(output_fp)
 
     # Check if output folder exists
     if output_fp.exists():
@@ -123,12 +124,6 @@ def fetch_repos(base_fp: Path, students: Sequence[Student], repos: Sequence[str]
                     else:
                         # Otherwise add repo location to student object
                         student.add_repo(repo_name, str(repo_fp))
-
-
-def check_required_fp_exists(fp_to_check: Path) -> None:
-    """Check if file path exists, and if not, raise exception"""
-    if not fp_to_check.exists():
-        raise FileNotFoundError(f"File '{fp_to_check}' does not exist!")
 
 
 def load_urls(urls_fp: Path) -> List[Student]:

@@ -46,6 +46,12 @@ class Student:
         self.repos[repo_name] = repo_path
 
 
+def check_required_fp_exists(fp_to_check: Path) -> None:
+    """Check if file path exists, and if not, raise exception"""
+    if not fp_to_check.exists():
+        raise FileNotFoundError(f"File '{fp_to_check}' does not exist!")
+
+
 def get_output_fp(output_folder: str | None, rules_file: Path) -> Path:
     """Determine output path given by user or extract it from rules file name"""
     if output_folder is not None:
@@ -58,3 +64,9 @@ def get_student_repo_fp(base_fp: Path, student_id: str, repo_name: str) -> Path:
     """Determine the path to a student repository"""
 
     return base_fp.joinpath(FOLDER_STUDENT_REPOS, student_id, repo_name)
+
+
+def get_valid_urls_yaml_fp(output_fp: Path):
+    """Determine path for validated URLs yaml file"""
+
+    return output_fp.joinpath(FILE_VALIDATED_GIT_URLS)
