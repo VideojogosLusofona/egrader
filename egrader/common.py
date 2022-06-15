@@ -1,4 +1,5 @@
 from pathlib import Path
+from types import MappingProxyType
 from typing import Final
 
 import requests

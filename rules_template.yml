@@ -1,14 +1,16 @@
-LP1Aula01:
+- repo: LP1Aula01
   weight: 10
-  checks:
-  - weight: 1
-    check_min_commits:
+  assessments:
+  - name: min_commits
+    weight: 1
+    params:
       minimum: 5
-LP1Semana01:
+- repo: LP1Semana01
   weight: 10
-  checks:
-  - weight: 1
-    check_min_commits:
+  assessments:
+  - name: min_commits
+    weight: 1
+    params:
       minimum: 1
 
   # - check_commit_msg_pten

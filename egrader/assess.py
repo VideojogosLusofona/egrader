@@ -36,8 +36,16 @@ def assess(args) -> None:
     # Load assessment plugins
     assess_plugins = entry_points(group="egrader.assess")
 
-    print(rules)
-    print()
-    print(students)
-    print()
-    print(assess_plugins)
+    assess_functions = {}
+
+    for ap in assess_plugins:
+        assess_functions[ap.name] = ap.load()
+
+    for student in students:
+        for rule in rules:
+            if rule["repo"] in student.repos:
+                for assessment in rule["assessments"]:
+                    assess_fun = assess_functions[assessment["name"]]
+                    repo_local_path = student.repos[rule["repo"]]
+                    assess_params = assessment["params"]
+                    assess_fun(repo_local_path, **assess_params)
