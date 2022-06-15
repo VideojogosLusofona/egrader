@@ -26,7 +26,11 @@ def assess(args) -> None:
     # Check if valid student URLs yaml file exists, and if not, quit
     check_required_fp_exists(student_urls_fp)
 
+    # Load rules
+    rules = load_yaml(rules_fp)
+
     # Load student list and their URLs
     students = load_yaml(student_urls_fp, safe=False)
 
+    print(rules)
     print(students)

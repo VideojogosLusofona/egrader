@@ -1,11 +1,15 @@
 LP1Aula01:
-  assess_weight: 0.5
+  weight: 10
   checks:
-  - check_num_commits
+  - weight: 1
+    check_min_commits:
+      minimum: 5
 LP1Semana01:
-  assess_weight: 0.5
+  weight: 10
   checks:
-  - check_num_commits
+  - weight: 1
+    check_min_commits:
+      minimum: 1
 
   # - check_commit_msg_pten
   # - check_github_noreply_email
