@@ -1,14 +1,16 @@
+from typing import Final
+
 import requests
 import validators
 
-OPT_E_SHORT = "e"
-OPT_E_LONG = "existing"
-OPT_E_STOP = "stop"
-OPT_E_UPDT = "update"
-OPT_E_OVWR = "overwrite"
+OPT_E_SHORT: Final[str] = "e"
+OPT_E_LONG: Final[str] = "existing"
+OPT_E_STOP: Final[str] = "stop"
+OPT_E_UPDT: Final[str] = "update"
+OPT_E_OVWR: Final[str] = "overwrite"
 
-FILE_VALIDATED_GIT_URLS = "validated_git_urls.yml"
-FOLDER_STUDENTS = "students"
+FILE_VALIDATED_GIT_URLS: Final[str] = "validated_git_urls.yml"
+FOLDER_STUDENTS: Final[str] = "students"
 
 
 class Student:
