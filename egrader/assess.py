@@ -53,10 +53,47 @@ def assess(args) -> None:
 
     # Apply rules and assessments to each student
     for student in students:
+
+        # Current student's grade starts at zero
+        student_grade = 0
+
+        # Loop through rules
         for rule in rules:
+
+            # Get the weight of the current rule
+            rule_weight = rule["weight"]
+
+            # Current rule's grade starts at zero
+            rule_grade = 0
+
+            # If student has the repository specified in the current rule, apply
+            # the specified assessments
             if rule["repo"] in student.repos:
+
+                # Loop through the assessments to be made for the current rule's
+                # repository
                 for assessment in rule["assessments"]:
+
+                    # Get the weight of the current assessment within the current
+                    # rule
+                    assessment_weight = assessment["weight"]
+
+                    # Get the plugin function which will perform the assessment
+                    # and the respective parameters
                     assess_fun = assess_functions[assessment["name"]]
-                    repo_local_path = student.repos[rule["repo"]]
                     assess_params = assessment["params"]
-                    assess_fun(repo_local_path, **assess_params)
+
+                    # Get the student's repository local path
+                    repo_local_path = student.repos[rule["repo"]]
+
+                    # Perform assessment and obtain the assessment's grade
+                    # between 0 and 1
+                    assess_grade = assess_fun(repo_local_path, **assess_params)
+
+                    # Update the grade for the current rule
+                    rule_grade += assessment_weight * assess_grade
+
+            # Update the grade for the current student
+            student_grade += rule_weight * rule_grade
+
+        print(f"Student {student.sid} grade is {student_grade}")
