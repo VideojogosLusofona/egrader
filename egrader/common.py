@@ -11,7 +11,7 @@ OPT_E_UPDT: Final[str] = "update"
 OPT_E_OVWR: Final[str] = "overwrite"
 
 FILE_VALIDATED_GIT_URLS: Final[str] = "validated_git_urls.yml"
-FOLDER_STUDENTS: Final[str] = "students"
+FOLDER_STUDENT_REPOS: Final[str] = "student_repos"
 
 OUTPUT_FOLDER_DEFAULT_PREFIX: Final[str] = "out_"
 
@@ -52,3 +52,9 @@ def get_output_fp(output_folder: str | None, rules_file: Path) -> Path:
         return Path(output_folder)
     else:
         return Path(f"{OUTPUT_FOLDER_DEFAULT_PREFIX}{rules_file.stem}")
+
+
+def get_student_repo_fp(base_fp: Path, student_id: str, repo_name: str) -> Path:
+    """Determine the path to a student repository"""
+
+    return base_fp.joinpath(FOLDER_STUDENT_REPOS, student_id, repo_name)

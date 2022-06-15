@@ -13,6 +13,7 @@ from .common import (
     OPT_E_STOP,
     Student,
     get_output_fp,
+    get_student_repo_fp,
 )
 from .git import GitError, git, git_at
 from .yaml import load_yaml, save_yaml
@@ -93,30 +94,27 @@ def fetch_repos(base_fp: Path, students: Sequence[Student], repos: Sequence[str]
     for student in students:
         if student.valid_url:
 
-            # Determine path where to place student repos
-            student_path = base_fp.joinpath(student.sid)
-
             # Loop through mandated repos
             for repo_name in repos:
 
                 # Determine repo URL and local path
                 repo_url = URL(student.git_url) / repo_name
-                repo_path = student_path.joinpath(repo_name)
+                repo_fp = get_student_repo_fp(base_fp, student.sid, repo_name)
 
                 # Does the repository already exist?
-                if repo_path.exists():
+                if repo_fp.exists():
 
                     # Path exists, only update repository
-                    git_at(repo_path, "pull")
+                    git_at(repo_fp, "pull")
 
                     # Add repo location to student object
-                    student.add_repo(repo_name, str(repo_path))
+                    student.add_repo(repo_name, str(repo_fp))
 
                 else:
 
                     # Repository doesn't exist, do a full clone
                     try:
-                        git("clone", repo_url, repo_path)
+                        git("clone", repo_url, repo_fp)
 
                     except GitError:
                         # If a GitException occurs, assume the repo doesn't exist
@@ -124,7 +122,7 @@ def fetch_repos(base_fp: Path, students: Sequence[Student], repos: Sequence[str]
 
                     else:
                         # Otherwise add repo location to student object
-                        student.add_repo(repo_name, str(repo_path))
+                        student.add_repo(repo_name, str(repo_fp))
 
 
 def check_required_fp_exists(fp_to_check: Path) -> None:
