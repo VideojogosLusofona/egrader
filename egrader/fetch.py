@@ -56,7 +56,7 @@ def fetch(args) -> None:
 
             # Delete folder and its contents and recreate it
             print("Output folder already exists, deleting it...")
-            shutil.rmdir(output_fp)
+            shutil.rmtree(output_fp)
             output_fp.mkdir()
     else:
 
