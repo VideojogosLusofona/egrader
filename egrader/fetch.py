@@ -14,7 +14,7 @@ from .common import (
     check_required_fp_exists,
     get_output_fp,
     get_student_repo_fp,
-    get_valid_urls_yaml_fp,
+    get_valid_student_urls_fp,
 )
 from .git import GitError, git, git_at
 from .yaml import load_yaml, save_yaml
@@ -38,7 +38,7 @@ def fetch(args) -> None:
     output_fp: Path = get_output_fp(args.output_folder, rules_fp)
 
     # Determine file path for validated URLs yaml file
-    validated_urls_fp: Path = get_valid_urls_yaml_fp(output_fp)
+    student_urls_fp: Path = get_valid_student_urls_fp(output_fp)
 
     # Check if output folder exists
     if output_fp.exists():
@@ -67,11 +67,11 @@ def fetch(args) -> None:
     repo_rules = load_yaml(rules_fp)
 
     # Load student Git URLs
-    if validated_urls_fp.exists():
+    if student_urls_fp.exists():
 
         # If file with validated URLs already exists, load info from there to
         # avoid rechecking the URLs (only with "-e update" option)
-        students = load_yaml(validated_urls_fp, safe=False)
+        students = load_yaml(student_urls_fp, safe=False)
 
     else:
 
@@ -83,7 +83,7 @@ def fetch(args) -> None:
 
     # Save validated URLs and repositories to avoid rechecking them later with
     # the "-e update" option
-    save_yaml(validated_urls_fp, students)
+    save_yaml(student_urls_fp, students)
 
     print(students)
 

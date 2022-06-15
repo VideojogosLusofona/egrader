@@ -66,7 +66,7 @@ def get_student_repo_fp(base_fp: Path, student_id: str, repo_name: str) -> Path:
     return base_fp.joinpath(FOLDER_STUDENT_REPOS, student_id, repo_name)
 
 
-def get_valid_urls_yaml_fp(output_fp: Path):
+def get_valid_student_urls_fp(output_fp: Path):
     """Determine path for validated URLs yaml file"""
 
     return output_fp.joinpath(FILE_VALIDATED_GIT_URLS)
