@@ -12,6 +12,7 @@ from .common import (
     OPT_E_SHORT,
     OPT_E_STOP,
     Student,
+    get_output_fp,
 )
 from .git import GitError, git, git_at
 from .yaml import load_yaml, save_yaml
@@ -32,10 +33,7 @@ def fetch(args) -> None:
 
     # Determine output folder, either given by user or we extract it from the
     # rules file name
-    if args.output_folder is not None:
-        output_fp = Path(args.output)
-    else:
-        output_fp = Path(f"out_{rules_fp.stem}")
+    output_fp: Path = get_output_fp(args.output_folder, rules_fp)
 
     # Create file path for validated URLs yaml file
     validated_urls_fp = output_fp.joinpath(FILE_VALIDATED_GIT_URLS)

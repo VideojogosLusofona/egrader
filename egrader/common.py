@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Final
 
 import requests
@@ -11,6 +12,8 @@ OPT_E_OVWR: Final[str] = "overwrite"
 
 FILE_VALIDATED_GIT_URLS: Final[str] = "validated_git_urls.yml"
 FOLDER_STUDENTS: Final[str] = "students"
+
+OUTPUT_FOLDER_DEFAULT_PREFIX: Final[str] = "out_"
 
 
 class Student:
@@ -41,3 +44,11 @@ class Student:
 
     def add_repo(self, repo_name, repo_path):
         self.repos[repo_name] = repo_path
+
+
+def get_output_fp(output_folder: str | None, rules_file: Path) -> Path:
+    """Determine output path given by user or extract it from rules file name"""
+    if output_folder is not None:
+        return Path(output_folder)
+    else:
+        return Path(f"{OUTPUT_FOLDER_DEFAULT_PREFIX}{rules_file.stem}")
