@@ -12,7 +12,7 @@ from .common import (
     OPT_E_STOP,
     StudentGit,
     check_required_fp_exists,
-    get_output_fp,
+    get_assess_fp,
     get_student_repo_fp,
     get_valid_students_git_fp,
 )
@@ -33,35 +33,35 @@ def fetch(args) -> None:
     # Check if rules file exists, and if not, quit
     check_required_fp_exists(rules_fp)
 
-    # Determine output folder, either given by user or we extract it from the
-    # rules file name
-    output_fp: Path = get_output_fp(args.output_folder, rules_fp)
+    # Determine assessment output folder, either given by user or we extract it
+    # from the rules file name
+    assess_fp: Path = get_assess_fp(args.assess_folder, rules_fp)
 
     # Determine file path for validated URLs yaml file
-    students_git_fp: Path = get_valid_students_git_fp(output_fp)
+    students_git_fp: Path = get_valid_students_git_fp(assess_fp)
 
-    # Check if output folder exists
-    if output_fp.exists():
+    # Check if the assessment output folder exists
+    if assess_fp.exists():
 
         # If so, action to take depends on the -e command line option
         if getattr(args, OPT_E_LONG) == OPT_E_STOP:
 
             # Stop processing
             raise FileExistsError(
-                "Output folder already exists, stopping operation. Check the "
+                "Assessment folder already exists, stopping operation. Check the "
                 f"-{OPT_E_SHORT}/--{OPT_E_LONG} option for alternative behavior."
             )
 
         elif getattr(args, OPT_E_LONG) == OPT_E_OVWR:
 
             # Delete folder and its contents and recreate it
-            print("Output folder already exists, deleting it...")
-            shutil.rmtree(output_fp)
-            output_fp.mkdir()
+            print("Assessment folder already exists, deleting it...")
+            shutil.rmtree(assess_fp)
+            assess_fp.mkdir()
     else:
 
         # Folder doesn't exist, create it
-        output_fp.mkdir()
+        assess_fp.mkdir()
 
     # Load rules
     repo_rules = load_yaml(rules_fp)
@@ -82,7 +82,7 @@ def fetch(args) -> None:
         students_git = load_urls(urls_fp)
 
     # Clone or update student repositories
-    fetch_repos(output_fp, students_git, [rule["repo"] for rule in repo_rules])
+    fetch_repos(assess_fp, students_git, [rule["repo"] for rule in repo_rules])
 
     # Save validated URLs and repositories to avoid rechecking them later with
     # the "-e update" option

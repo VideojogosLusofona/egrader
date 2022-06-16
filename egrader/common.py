@@ -13,8 +13,7 @@ OPT_E_OVWR: Final[str] = "overwrite"
 FILE_VALID_STUDENTS_GIT: Final[str] = "validated_git_urls.yml"
 FILE_ASSESSED_STUDENTS: Final[str] = "assessed_students.yml"
 FOLDER_STUDENT_REPOS: Final[str] = "student_repos"
-
-OUTPUT_FOLDER_DEFAULT_PREFIX: Final[str] = "out_"
+FOLDER_ASSESS_DEFAULT_PREFIX: Final[str] = "out_"
 
 
 class StudentGit:
@@ -139,12 +138,12 @@ def check_required_fp_exists(fp_to_check: Path) -> None:
         raise FileNotFoundError(f"File '{fp_to_check}' does not exist!")
 
 
-def get_output_fp(output_folder: str | None, rules_file: Path) -> Path:
-    """Determine output path given by user or extract it from rules file name."""
-    if output_folder is not None:
-        return Path(output_folder)
+def get_assess_fp(assess_folder: str | None, rules_file: Path) -> Path:
+    """Determine assessment folder path given by user or get it from rules file name."""
+    if assess_folder is not None:
+        return Path(assess_folder)
     else:
-        return Path(f"{OUTPUT_FOLDER_DEFAULT_PREFIX}{rules_file.stem}")
+        return Path(f"{FOLDER_ASSESS_DEFAULT_PREFIX}{rules_file.stem}")
 
 
 def get_student_repo_fp(base_fp: Path, student_id: str, repo_name: str) -> Path:
@@ -153,13 +152,13 @@ def get_student_repo_fp(base_fp: Path, student_id: str, repo_name: str) -> Path:
     return base_fp.joinpath(FOLDER_STUDENT_REPOS, student_id, repo_name)
 
 
-def get_valid_students_git_fp(output_fp: Path) -> Path:
+def get_valid_students_git_fp(assess_fp: Path) -> Path:
     """Determine path for valid student Git URLs yaml file."""
 
-    return output_fp.joinpath(FILE_VALID_STUDENTS_GIT)
+    return assess_fp.joinpath(FILE_VALID_STUDENTS_GIT)
 
 
-def get_assessed_students_fp(output_fp: Path) -> Path:
+def get_assessed_students_fp(assess_fp: Path) -> Path:
     """Determine path for student assessments yaml file."""
 
-    return output_fp.joinpath(FILE_ASSESSED_STUDENTS)
+    return assess_fp.joinpath(FILE_ASSESSED_STUDENTS)

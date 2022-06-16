@@ -1,15 +1,15 @@
 from importlib.metadata import EntryPoints, entry_points
 from inspect import getdoc
 from pathlib import Path
-from typing import List, MutableSet
+from typing import Any, Dict, List, MutableSet
 
 from .common import (
     AssessedRepo,
     AssessedStudent,
     Assessment,
     check_required_fp_exists,
+    get_assess_fp,
     get_assessed_students_fp,
-    get_output_fp,
     get_valid_students_git_fp,
 )
 from .yaml import load_yaml, save_yaml
@@ -24,15 +24,15 @@ def assess(args) -> None:
     # Check if rules file exists, and if not, quit
     check_required_fp_exists(rules_fp)
 
-    # Determine output folder, either given by user or we extract it from the
-    # rules file name
-    output_fp: Path = get_output_fp(args.output_folder, rules_fp)
+    # Determine assessment folder, either given by user or we extract it from
+    # the rules file name
+    assess_fp: Path = get_assess_fp(args.assess_folder, rules_fp)
 
-    # Check if output folder exists, and if not, quit
-    check_required_fp_exists(output_fp)
+    # Check if assessment folder exists, and if not, quit
+    check_required_fp_exists(assess_fp)
 
     # Determine file path for valid students Git URL and repos yaml file
-    students_git_fp: Path = get_valid_students_git_fp(output_fp)
+    students_git_fp: Path = get_valid_students_git_fp(assess_fp)
 
     # Check if valid students Git URL yaml file exists, and if not, quit
     check_required_fp_exists(students_git_fp)
@@ -53,7 +53,7 @@ def assess(args) -> None:
             required_assessments.add(assess_rule["name"])
 
     # Load required assessment plugins as specified by the rules
-    assess_functions = {}
+    assess_functions: Dict[str, Any] = {}
     for ap in assess_plugins:
         if ap.name in required_assessments:
             assess_functions[ap.name] = ap.load()
@@ -115,7 +115,7 @@ def assess(args) -> None:
         assessed_students.append(assessed_student)
 
     # Save list of assessed students to yaml file
-    save_yaml(get_assessed_students_fp(output_fp), assessed_students)
+    save_yaml(get_assessed_students_fp(assess_fp), assessed_students)
 
 
 def get_desc(func):

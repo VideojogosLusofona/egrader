@@ -50,9 +50,10 @@ def main():
         "rules_file", metavar="RULES", help="assessment rules in YAML format", nargs=1
     )
     parser_fetch.add_argument(
-        "output_folder",
-        metavar="OUTPUT",
-        help="output folder (defaults to RULES minus yaml extension)",
+        "assess_folder",
+        metavar="ASSESS_FOLDER",
+        help="Folder where assessment data will be placed (defaults to RULES "
+        "minus yaml extension)",
         nargs="?",
     )
     parser_fetch.set_defaults(func=fetch)
@@ -63,9 +64,10 @@ def main():
         "rules_file", metavar="RULES", help="assessment rules in YAML format", nargs=1
     )
     parser_assess.add_argument(
-        "output_folder",
-        metavar="OUTPUT",
-        help="output folder (defaults to RULES minus yaml extension)",
+        "assess_folder",
+        metavar="ASSESS_FOLDER",
+        help="Folder where assessment data is located (defaults to RULES "
+        "minus yaml extension)",
         nargs="?",
     )
     parser_assess.set_defaults(func=assess)
