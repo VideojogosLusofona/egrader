@@ -1,4 +1,5 @@
 from importlib.metadata import EntryPoints, entry_points
+from inspect import getdoc
 from pathlib import Path
 from typing import List, MutableSet
 
@@ -98,7 +99,7 @@ def assess(args) -> None:
                     # Create assessment object
                     assessment = Assessment(
                         assess_rule["name"],
-                        assess_rule["name"],
+                        get_desc(assess_fun),
                         assess_rule["weight"],
                         assess_grade,
                     )
@@ -114,3 +115,16 @@ def assess(args) -> None:
 
     # Save list of assessed students to yaml file
     save_yaml(get_assessed_students_fp(output_fp), assessed_students)
+
+
+def get_desc(func):
+    """Get a short description of the assessment function."""
+
+    desc = getdoc(func)
+
+    if desc is not None and len(desc) > 0:
+        desc = desc.split("\n")[0]
+    else:
+        desc = "Unavailable"
+
+    return desc
