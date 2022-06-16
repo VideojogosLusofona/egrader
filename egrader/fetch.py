@@ -66,6 +66,9 @@ def fetch(args) -> None:
     # Load rules
     repo_rules = load_yaml(rules_fp)
 
+    # Declare list of student valid Git URLs
+    students_git: List[StudentGit]
+
     # Load student Git URLs
     if students_git_fp.exists():
 
@@ -88,7 +91,7 @@ def fetch(args) -> None:
 
 def fetch_repos(
     base_fp: Path, students_git: Sequence[StudentGit], repos: Sequence[str]
-):
+) -> None:
     """Clone or update student repositories"""
 
     # Loop through students
@@ -99,8 +102,8 @@ def fetch_repos(
             for repo_name in repos:
 
                 # Determine repo URL and local path
-                repo_url = URL(student_git.url) / repo_name
-                repo_fp = get_student_repo_fp(base_fp, student_git.sid, repo_name)
+                repo_url: URL = URL(student_git.url) / repo_name
+                repo_fp: Path = get_student_repo_fp(base_fp, student_git.sid, repo_name)
 
                 # Does the repository already exist?
                 if repo_fp.exists():

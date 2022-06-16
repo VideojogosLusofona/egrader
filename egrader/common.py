@@ -20,7 +20,7 @@ OUTPUT_FOLDER_DEFAULT_PREFIX: Final[str] = "out_"
 class StudentGit:
     """A student and his Git repositories."""
 
-    def __init__(self, sid: str, url: str):
+    def __init__(self, sid: str, url: str) -> None:
         # Set instance variables
         self.sid: str = sid
         self.url: str = url
@@ -31,7 +31,7 @@ class StudentGit:
         if validators.url(self.url) and requests.head(self.url).status_code < 400:
             self.valid_url = True
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "%s(sid=%r, url=%r, valid_url=%r, repos=%r)" % (
             self.__class__.__name__,
             self.sid,
@@ -47,14 +47,16 @@ class StudentGit:
 class Assessment:
     """An already performed assessment."""
 
-    def __init__(self, name: str, description: str, weight: float, grade_raw: float):
+    def __init__(
+        self, name: str, description: str, weight: float, grade_raw: float
+    ) -> None:
         # Set instance variables
         self.name: str = name
         self.description: str = description
         self.weight: float = weight
         self.grade_raw: float = grade_raw
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "%s(name=%r, description=%r, weight=%r, grade_raw=%r)" % (
             self.__class__.__name__,
             self.name,
@@ -71,7 +73,7 @@ class Assessment:
 class AssessedRepo:
     """An assessed student repository."""
 
-    def __init__(self, name: str, weight: float):
+    def __init__(self, name: str, weight: float) -> None:
         # Set instance variables
         self.name: str = name
         self.weight: float = weight
@@ -80,7 +82,7 @@ class AssessedRepo:
         self.assessments: List[Assessment] = []
         self.exists = False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             "%s(name=%r, weight=%r, grade_raw=%r, inter_repo_mod=%r, assessments=%r)"
             % (
@@ -106,13 +108,13 @@ class AssessedRepo:
 class AssessedStudent:
     """An assessed student."""
 
-    def __init__(self, sid: str):
+    def __init__(self, sid: str) -> None:
         # Set instance variables
         self.sid: str = sid
         self.grade: float = 0
         self.assessed_repos: List[AssessedRepo] = []
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "%s(sid=%r, grade=%r, assessed_repos=%r)" % (
             self.__class__.__name__,
             self.sid,
@@ -120,7 +122,7 @@ class AssessedStudent:
             self.assessed_repos,
         )
 
-    def add_assessed_repo(self, assessed_repo: AssessedRepo):
+    def add_assessed_repo(self, assessed_repo: AssessedRepo) -> None:
         self.assessed_repos.append(assessed_repo)
         self.grade += assessed_repo.grade_final
 
@@ -145,13 +147,13 @@ def get_student_repo_fp(base_fp: Path, student_id: str, repo_name: str) -> Path:
     return base_fp.joinpath(FOLDER_STUDENT_REPOS, student_id, repo_name)
 
 
-def get_valid_students_git_fp(output_fp: Path):
+def get_valid_students_git_fp(output_fp: Path) -> Path:
     """Determine path for valid student Git URLs yaml file."""
 
     return output_fp.joinpath(FILE_VALID_STUDENTS_GIT)
 
 
-def get_assessed_students_fp(output_fp: Path):
+def get_assessed_students_fp(output_fp: Path) -> Path:
     """Determine path for student assessments yaml file."""
 
     return output_fp.joinpath(FILE_ASSESSED_STUDENTS)
