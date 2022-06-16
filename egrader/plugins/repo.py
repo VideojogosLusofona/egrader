@@ -1,4 +1,4 @@
-from .git import git_at
+from ..git import git_at
 
 
 def assess_min_commits(repo_path: str, minimum: int) -> float:

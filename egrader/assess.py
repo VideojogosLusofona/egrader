@@ -1,7 +1,6 @@
-from importlib.metadata import EntryPoints, entry_points
 from inspect import getdoc
 from pathlib import Path
-from typing import Any, Dict, List, MutableSet
+from typing import Dict, List, MutableSet
 
 from .common import (
     AssessedRepo,
@@ -11,6 +10,7 @@ from .common import (
     get_assess_fp,
     get_assessed_students_fp,
     get_valid_students_git_fp,
+    load_plugin_functions,
 )
 from .yaml import load_yaml, save_yaml
 
@@ -43,26 +43,25 @@ def assess(args) -> None:
     # Load student list and their URLs
     students_git = load_yaml(students_git_fp, safe=False)
 
-    # Load assessment plugins
-    assess_plugins: EntryPoints = entry_points(group="egrader.assess")
-
-    # Create a set of all required assessments
-    required_assessments: MutableSet[str] = set()
-    for rule in rules:
-        for assess_rule in rule["assessments"]:
-            required_assessments.add(assess_rule["name"])
+    # Obtained all the repository assessments defined by the rules
+    required_assessments: MutableSet[str] = {
+        assess_rule["name"]
+        for rule in rules
+        if "assessments" in rule
+        for assess_rule in rule["assessments"]
+    }
 
     # Load required assessment plugins as specified by the rules
-    assess_functions: Dict[str, Any] = {}
-    for ap in assess_plugins:
-        if ap.name in required_assessments:
-            assess_functions[ap.name] = ap.load()
-        else:
-            # TODO Raise error
-            pass
+    assess_functions = load_plugin_functions(
+        "egrader.assess_repo", required_assessments
+    )
 
     # Initialize student grades list
     assessed_students: List[AssessedStudent] = []
+
+    # Initialize dictionary of assessed repositories by name, which will be
+    # required later for inter-repository assessments
+    repos_by_name: Dict[str, List[AssessedRepo]] = {rule["repo"]: [] for rule in rules}
 
     # Apply rules and assessments to each student
     for student_git in students_git:
@@ -80,39 +79,63 @@ def assess(args) -> None:
             # the specified assessments
             if rule["repo"] in student_git.repos:
 
+                # Append repository being assessed to dictionary of repositories
+                # by name (will be required later for inter-repository assessments)
+                repos_by_name[rule["repo"]].append(assessed_repo)
+
                 # Loop through the assessments to be made for the current rule's
-                # repository
-                for assess_rule in rule["assessments"]:
+                # repository, if any
+                if "assessments" in rule:
 
-                    # Get the plugin function which will perform the assessment
-                    # and the respective parameters
-                    assess_fun = assess_functions[assess_rule["name"]]
-                    assess_params = assess_rule["params"]
+                    for assess_rule in rule["assessments"]:
 
-                    # Get the student's repository local path
-                    repo_local_path = student_git.repos[rule["repo"]]
+                        # Get the plugin function which will perform the assessment
+                        # and the respective parameters
+                        assess_fun = assess_functions[assess_rule["name"]]
+                        assess_params = assess_rule["params"]
 
-                    # Perform assessment and obtain the assessment's grade
-                    # between 0 and 1
-                    assess_grade = assess_fun(repo_local_path, **assess_params)
+                        # Get the student's repository local path
+                        repo_local_path = student_git.repos[rule["repo"]]
 
-                    # Create assessment object
-                    assessment = Assessment(
-                        assess_rule["name"],
-                        get_desc(assess_fun),
-                        assess_params,
-                        assess_rule["weight"],
-                        assess_grade,
-                    )
+                        # Perform assessment and obtain the assessment's grade
+                        # between 0 and 1
+                        assess_grade = assess_fun(repo_local_path, **assess_params)
 
-                    # Add it to the repository currently being assessed
-                    assessed_repo.add_assessment(assessment)
+                        # Create assessment object
+                        assessment = Assessment(
+                            assess_rule["name"],
+                            get_desc(assess_fun),
+                            assess_params,
+                            assess_rule["weight"],
+                            assess_grade,
+                        )
+
+                        # Add it to the repository currently being assessed
+                        assessed_repo.add_assessment(assessment)
 
             # Add assessed repo to student being assessed
             assessed_student.add_assessed_repo(assessed_repo)
 
         # Add assessed student to list of assessed students
         assessed_students.append(assessed_student)
+
+    # Obtained all the repository assessments defined by the rules
+    required_inter_assessments: MutableSet[str] = {
+        inter_assess_rule["name"]
+        for rule in rules
+        if "inter-assessments" in rule
+        for inter_assess_rule in rule["inter-assessments"]
+    }
+
+    # Load required inter-assessment plugins as specified by the rules
+    inter_assess_functions = load_plugin_functions(
+        "egrader.assess_inter_repo", required_inter_assessments
+    )
+
+    # Apply intra-repository assessments
+    for rule in rules:
+        if "inter-assignments" in rule:
+            pass  # repos_by_name[rule["name"]]
 
     # Save list of assessed students to yaml file
     save_yaml(get_assessed_students_fp(assess_fp), assessed_students)

@@ -3,11 +3,11 @@ from sh import git as sh_git
 
 
 class GitError(Exception):
-    """Error raised when a Git command fails"""
+    """Error raised when a Git command fails."""
 
 
 def git(*args):
-    """Run git with the specified arguments"""
+    """Run git with the specified arguments."""
     try:
         return sh_git(*args)
     except ErrorReturnCode as erc:
@@ -18,5 +18,5 @@ def git(*args):
 
 
 def git_at(repo_path, *args):
-    """Run git at location given by repo_path with the specified arguments"""
+    """Run git at location given by repo_path with the specified arguments."""
     return git("-C", repo_path, *args)

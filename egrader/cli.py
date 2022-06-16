@@ -4,7 +4,14 @@ import sys
 from sh import ErrorReturnCode
 
 from .assess import assess
-from .common import OPT_E_LONG, OPT_E_OVWR, OPT_E_SHORT, OPT_E_STOP, OPT_E_UPDT
+from .common import (
+    OPT_E_LONG,
+    OPT_E_OVWR,
+    OPT_E_SHORT,
+    OPT_E_STOP,
+    OPT_E_UPDT,
+    LoadPluginError,
+)
 from .fetch import fetch
 
 
@@ -78,7 +85,13 @@ def main():
     # Invoke function to perform selected command
     try:
         args.func(args)
-    except (FileNotFoundError, FileExistsError, SyntaxError, ErrorReturnCode) as e:
+    except (
+        FileNotFoundError,
+        FileExistsError,
+        SyntaxError,
+        ErrorReturnCode,
+        LoadPluginError,
+    ) as e:
         print(e.args[0], file=sys.stderr)
         if args.debug:
             print("-------- Exception details --------", file=sys.stderr)
