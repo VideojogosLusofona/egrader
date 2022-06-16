@@ -16,28 +16,28 @@ FOLDER_STUDENT_REPOS: Final[str] = "student_repos"
 OUTPUT_FOLDER_DEFAULT_PREFIX: Final[str] = "out_"
 
 
-class Student:
-    """A student and his repositories."""
+class StudentGit:
+    """A student and his Git repositories."""
 
-    def __init__(self, sid, git_url):
+    def __init__(self, sid, url):
         # Set instance variables
         self.sid = sid
-        self.git_url = git_url
+        self.url = url
         self.valid_url = False
         self.repos = {}
 
         # Validate URL if it's is well-formed and if it exists (200)
         if (
-            validators.url(self.git_url)
-            and requests.head(self.git_url).status_code < 400
+            validators.url(self.url)
+            and requests.head(self.url).status_code < 400
         ):
             self.valid_url = True
 
     def __repr__(self):
-        return "%s(sid=%r, git_url=%r, valid_url=%r, repos=%r)" % (
+        return "%s(sid=%r, url=%r, valid_url=%r, repos=%r)" % (
             self.__class__.__name__,
             self.sid,
-            self.git_url,
+            self.url,
             self.valid_url,
             self.repos,
         )
@@ -66,7 +66,7 @@ def get_student_repo_fp(base_fp: Path, student_id: str, repo_name: str) -> Path:
     return base_fp.joinpath(FOLDER_STUDENT_REPOS, student_id, repo_name)
 
 
-def get_valid_student_urls_fp(output_fp: Path):
-    """Determine path for validated URLs yaml file"""
+def get_valid_students_git_fp(output_fp: Path):
+    """Determine path for validated Git URLs yaml file"""
 
     return output_fp.joinpath(FILE_VALIDATED_GIT_URLS)

@@ -10,11 +10,11 @@ from .common import (
     OPT_E_OVWR,
     OPT_E_SHORT,
     OPT_E_STOP,
-    Student,
+    StudentGit,
     check_required_fp_exists,
     get_output_fp,
     get_student_repo_fp,
-    get_valid_student_urls_fp,
+    get_valid_students_git_fp,
 )
 from .git import GitError, git, git_at
 from .yaml import load_yaml, save_yaml
@@ -38,7 +38,7 @@ def fetch(args) -> None:
     output_fp: Path = get_output_fp(args.output_folder, rules_fp)
 
     # Determine file path for validated URLs yaml file
-    student_urls_fp: Path = get_valid_student_urls_fp(output_fp)
+    students_git_fp: Path = get_valid_students_git_fp(output_fp)
 
     # Check if output folder exists
     if output_fp.exists():
@@ -67,40 +67,38 @@ def fetch(args) -> None:
     repo_rules = load_yaml(rules_fp)
 
     # Load student Git URLs
-    if student_urls_fp.exists():
+    if students_git_fp.exists():
 
         # If file with validated URLs already exists, load info from there to
         # avoid rechecking the URLs (only with "-e update" option)
-        students = load_yaml(student_urls_fp, safe=False)
+        students_git = load_yaml(students_git_fp, safe=False)
 
     else:
 
         # Otherwise load info from original file and validate URLs
-        students = load_urls(urls_fp)
+        students_git = load_urls(urls_fp)
 
     # Clone or update student repositories
-    fetch_repos(output_fp, students, repo_rules.keys())
+    fetch_repos(output_fp, students_git, [ rule["repo"] for rule in repo_rules ])
 
     # Save validated URLs and repositories to avoid rechecking them later with
     # the "-e update" option
-    save_yaml(student_urls_fp, students)
-
-    print(students)
+    save_yaml(students_git_fp, students_git)
 
 
-def fetch_repos(base_fp: Path, students: Sequence[Student], repos: Sequence[str]):
+def fetch_repos(base_fp: Path, students_git: Sequence[StudentGit], repos: Sequence[str]):
     """Clone or update student repositories"""
 
     # Loop through students
-    for student in students:
-        if student.valid_url:
+    for student_git in students_git:
+        if student_git.valid_url:
 
             # Loop through mandated repos
             for repo_name in repos:
 
                 # Determine repo URL and local path
-                repo_url = URL(student.git_url) / repo_name
-                repo_fp = get_student_repo_fp(base_fp, student.sid, repo_name)
+                repo_url = URL(student_git.url) / repo_name
+                repo_fp = get_student_repo_fp(base_fp, student_git.sid, repo_name)
 
                 # Does the repository already exist?
                 if repo_fp.exists():
@@ -109,7 +107,7 @@ def fetch_repos(base_fp: Path, students: Sequence[Student], repos: Sequence[str]
                     git_at(repo_fp, "pull")
 
                     # Add repo location to student object
-                    student.add_repo(repo_name, str(repo_fp))
+                    student_git.add_repo(repo_name, str(repo_fp))
 
                 else:
 
@@ -123,14 +121,14 @@ def fetch_repos(base_fp: Path, students: Sequence[Student], repos: Sequence[str]
 
                     else:
                         # Otherwise add repo location to student object
-                        student.add_repo(repo_name, str(repo_fp))
+                        student_git.add_repo(repo_name, str(repo_fp))
 
 
-def load_urls(urls_fp: Path) -> List[Student]:
+def load_urls(urls_fp: Path) -> List[StudentGit]:
     """Load student Git URLs"""
 
     # The student list, initially empty
-    students: List[Student] = []
+    students_git: List[StudentGit] = []
 
     # Open Git URLs file
     with open(urls_fp) as urls_file:
@@ -153,10 +151,10 @@ def load_urls(urls_fp: Path) -> List[Student]:
                 )
 
             # Create a student instance with it's ID and URL, taken from the line
-            student = Student(std_url[0], std_url[1])
+            student_git = StudentGit(std_url[0], std_url[1])
 
             # Append new student to the student list
-            students.append(student)
+            students_git.append(student_git)
 
     # Return students
-    return students
+    return students_git

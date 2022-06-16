@@ -1,7 +1,7 @@
 from importlib.metadata import entry_points
 from pathlib import Path
 
-from .common import check_required_fp_exists, get_output_fp, get_valid_student_urls_fp
+from .common import check_required_fp_exists, get_output_fp, get_valid_students_git_fp
 from .yaml import load_yaml
 
 
@@ -21,17 +21,17 @@ def assess(args) -> None:
     # Check if output folder exists, and if not, quit
     check_required_fp_exists(output_fp)
 
-    # Determine file path for valid student URLs yaml file
-    student_urls_fp: Path = get_valid_student_urls_fp(output_fp)
+    # Determine file path for valid students Git URL and repos yaml file
+    students_git_fp: Path = get_valid_students_git_fp(output_fp)
 
-    # Check if valid student URLs yaml file exists, and if not, quit
-    check_required_fp_exists(student_urls_fp)
+    # Check if valid students Git URL yaml file exists, and if not, quit
+    check_required_fp_exists(students_git_fp)
 
     # Load rules
     rules = load_yaml(rules_fp)
 
     # Load student list and their URLs
-    students = load_yaml(student_urls_fp, safe=False)
+    students_git = load_yaml(students_git_fp, safe=False)
 
     # Load assessment plugins
     assess_plugins = entry_points(group="egrader.assess")
@@ -52,7 +52,7 @@ def assess(args) -> None:
             pass
 
     # Apply rules and assessments to each student
-    for student in students:
+    for student_git in students_git:
 
         # Current student's grade starts at zero
         student_grade = 0
@@ -68,7 +68,7 @@ def assess(args) -> None:
 
             # If student has the repository specified in the current rule, apply
             # the specified assessments
-            if rule["repo"] in student.repos:
+            if rule["repo"] in student_git.repos:
 
                 # Loop through the assessments to be made for the current rule's
                 # repository
@@ -84,7 +84,7 @@ def assess(args) -> None:
                     assess_params = assessment["params"]
 
                     # Get the student's repository local path
-                    repo_local_path = student.repos[rule["repo"]]
+                    repo_local_path = student_git.repos[rule["repo"]]
 
                     # Perform assessment and obtain the assessment's grade
                     # between 0 and 1
@@ -96,4 +96,4 @@ def assess(args) -> None:
             # Update the grade for the current student
             student_grade += rule_weight * rule_grade
 
-        print(f"Student {student.sid} grade is {student_grade}")
+        print(f"Student {student_git.sid} grade is {student_grade}")
