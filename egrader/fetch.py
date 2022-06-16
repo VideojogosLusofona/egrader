@@ -79,14 +79,16 @@ def fetch(args) -> None:
         students_git = load_urls(urls_fp)
 
     # Clone or update student repositories
-    fetch_repos(output_fp, students_git, [ rule["repo"] for rule in repo_rules ])
+    fetch_repos(output_fp, students_git, [rule["repo"] for rule in repo_rules])
 
     # Save validated URLs and repositories to avoid rechecking them later with
     # the "-e update" option
     save_yaml(students_git_fp, students_git)
 
 
-def fetch_repos(base_fp: Path, students_git: Sequence[StudentGit], repos: Sequence[str]):
+def fetch_repos(
+    base_fp: Path, students_git: Sequence[StudentGit], repos: Sequence[str]
+):
     """Clone or update student repositories"""
 
     # Loop through students

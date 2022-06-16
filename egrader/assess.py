@@ -1,8 +1,17 @@
-from importlib.metadata import entry_points
+from importlib.metadata import EntryPoints, entry_points
 from pathlib import Path
+from typing import List, MutableSet
 
-from .common import check_required_fp_exists, get_output_fp, get_valid_students_git_fp
-from .yaml import load_yaml
+from .common import (
+    AssessedRepo,
+    AssessedStudent,
+    Assessment,
+    check_required_fp_exists,
+    get_assessed_students_fp,
+    get_output_fp,
+    get_valid_students_git_fp,
+)
+from .yaml import load_yaml, save_yaml
 
 
 def assess(args) -> None:
@@ -34,13 +43,13 @@ def assess(args) -> None:
     students_git = load_yaml(students_git_fp, safe=False)
 
     # Load assessment plugins
-    assess_plugins = entry_points(group="egrader.assess")
+    assess_plugins: EntryPoints = entry_points(group="egrader.assess")
 
     # Create a set of all required assessments
-    required_assessments = set()
+    required_assessments: MutableSet[str] = set()
     for rule in rules:
-        for assessment in rule["assessments"]:
-            required_assessments.add(assessment["name"])
+        for assess_rule in rule["assessments"]:
+            required_assessments.add(assess_rule["name"])
 
     # Load required assessment plugins as specified by the rules
     assess_functions = {}
@@ -51,20 +60,20 @@ def assess(args) -> None:
             # TODO Raise error
             pass
 
+    # Initialize student grades list
+    assessed_students: List[AssessedStudent] = []
+
     # Apply rules and assessments to each student
     for student_git in students_git:
 
-        # Current student's grade starts at zero
-        student_grade = 0
+        # Create instance of current student's assessment
+        assessed_student: AssessedStudent = AssessedStudent(student_git.sid)
 
         # Loop through rules
         for rule in rules:
 
-            # Get the weight of the current rule
-            rule_weight = rule["weight"]
-
-            # Current rule's grade starts at zero
-            rule_grade = 0
+            # Create an instance of the repository being assessed
+            assessed_repo: AssessedRepo = AssessedRepo(rule["repo"], rule["weight"])
 
             # If student has the repository specified in the current rule, apply
             # the specified assessments
@@ -72,16 +81,12 @@ def assess(args) -> None:
 
                 # Loop through the assessments to be made for the current rule's
                 # repository
-                for assessment in rule["assessments"]:
-
-                    # Get the weight of the current assessment within the current
-                    # rule
-                    assessment_weight = assessment["weight"]
+                for assess_rule in rule["assessments"]:
 
                     # Get the plugin function which will perform the assessment
                     # and the respective parameters
-                    assess_fun = assess_functions[assessment["name"]]
-                    assess_params = assessment["params"]
+                    assess_fun = assess_functions[assess_rule["name"]]
+                    assess_params = assess_rule["params"]
 
                     # Get the student's repository local path
                     repo_local_path = student_git.repos[rule["repo"]]
@@ -90,10 +95,22 @@ def assess(args) -> None:
                     # between 0 and 1
                     assess_grade = assess_fun(repo_local_path, **assess_params)
 
-                    # Update the grade for the current rule
-                    rule_grade += assessment_weight * assess_grade
+                    # Create assessment object
+                    assessment = Assessment(
+                        assess_rule["name"],
+                        assess_rule["name"],
+                        assess_rule["weight"],
+                        assess_grade,
+                    )
 
-            # Update the grade for the current student
-            student_grade += rule_weight * rule_grade
+                    # Add it to the repository currently being assessed
+                    assessed_repo.add_assessment(assessment)
 
-        print(f"Student {student_git.sid} grade is {student_grade}")
+            # Add assessed repo to student being assessed
+            assessed_student.add_assessed_repo(assessed_repo)
+
+        # Add assessed student to list of assessed students
+        assessed_students.append(assessed_student)
+
+    # Save list of assessed students to yaml file
+    save_yaml(get_assessed_students_fp(output_fp), assessed_students)
