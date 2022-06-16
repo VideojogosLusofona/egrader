@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Final, List
+from typing import Any, Dict, Final, List
 
 import requests
 import validators
@@ -48,11 +48,17 @@ class Assessment:
     """An already performed assessment."""
 
     def __init__(
-        self, name: str, description: str, weight: float, grade_raw: float
+        self,
+        name: str,
+        description: str,
+        parameters: Dict[str, Any],
+        weight: float,
+        grade_raw: float,
     ) -> None:
         # Set instance variables
         self.name: str = name
         self.description: str = description
+        self.parameters: Dict[str, Any] = parameters
         self.weight: float = weight
         self.grade_raw: float = grade_raw
 

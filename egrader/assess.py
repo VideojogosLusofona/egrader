@@ -100,6 +100,7 @@ def assess(args) -> None:
                     assessment = Assessment(
                         assess_rule["name"],
                         get_desc(assess_fun),
+                        assess_params,
                         assess_rule["weight"],
                         assess_grade,
                     )
