@@ -13,6 +13,7 @@ from .common import (
     LoadPluginError,
 )
 from .fetch import fetch
+from .report import report
 
 
 def main():
@@ -78,6 +79,18 @@ def main():
         nargs="?",
     )
     parser_assess.set_defaults(func=assess)
+
+    # Create the parser for the "report" command
+    parser_report = subparsers.add_parser(
+        "report", help="generate an assessment report"
+    )
+    parser_report.add_argument(
+        "assess_folder",
+        metavar="ASSESS_FOLDER",
+        help="Folder where assessment data is located",
+        nargs="?",
+    )
+    parser_report.set_defaults(func=report)
 
     # Parse command line arguments
     args = parser.parse_args()
