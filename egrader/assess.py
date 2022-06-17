@@ -125,8 +125,8 @@ def assess(args) -> None:
     required_inter_assessments: MutableSet[str] = {
         inter_assess_rule["name"]
         for rule in rules
-        if "inter-assessments" in rule
-        for inter_assess_rule in rule["inter-assessments"]
+        if "inter_assessments" in rule
+        for inter_assess_rule in rule["inter_assessments"]
     }
 
     # Load required inter-assessment plugins as specified by the rules
@@ -136,37 +136,36 @@ def assess(args) -> None:
 
     # Apply intra-repository assessments
     for rule in rules:
-        if "inter-assessments" in rule:
-            for inter_assessments in rule["inter-assessments"]:
+        if "inter_assessments" in rule:
 
-                repos_with_name: List[AssessedRepo] = repos_by_name[rule["name"]]
+            for inter_assess_rule in rule["inter_assessments"]:
 
-                for inter_assess_rule in inter_assessments:
+                repos_with_name: List[AssessedRepo] = repos_by_name[rule["repo"]]
 
-                    inter_assess_fun = inter_assess_functions[inter_assess_rule["name"]]
-                    inter_assess_params = inter_assess_rule["params"]
+                inter_assess_fun = inter_assess_functions[inter_assess_rule["name"]]
+                inter_assess_params = inter_assess_rule["params"]
 
-                    # Perform inter-repo assessment and obtain the assessment's
-                    # grade between 0 and 1
-                    inter_assess_grades = inter_assess_fun(
-                        [sr.local_path for sr in repos_with_name], **inter_assess_params
+                # Perform inter-repo assessment and obtain the assessment's
+                # grade between 0 and 1
+                inter_assess_grades = inter_assess_fun(
+                    [sr.local_path for sr in repos_with_name], **inter_assess_params
+                )
+
+                # Create assessments (one per repos with the current name)
+                assessments = [
+                    Assessment(
+                        inter_assess_rule["name"],
+                        get_desc(inter_assess_fun),
+                        inter_assess_params,
+                        inter_assess_rule["weight"],
+                        iag,
                     )
+                    for iag in inter_assess_grades
+                ]
 
-                    # Create assessments (one per repos with the current name)
-                    assessments = [
-                        Assessment(
-                            assess_rule["name"],
-                            get_desc(assess_fun),
-                            assess_params,
-                            assess_rule["weight"],
-                            iag,
-                        )
-                        for iag in inter_assess_grades
-                    ]
-
-                    # Add assessments to each repo with the current name
-                    for ar, a in zip(repos_with_name, assessments):
-                        ar.add_inter_assessment(a)
+                # Add assessments to each repo with the current name
+                for ar, a in zip(repos_with_name, assessments):
+                    ar.add_inter_assessment(a)
 
     # Save list of assessed students to yaml file
     save_yaml(get_assessed_students_fp(assess_fp), assessed_students)

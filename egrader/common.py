@@ -97,11 +97,9 @@ class AssessedRepo:
         )
 
     def add_assessment(self, assessment: Assessment) -> None:
-        self.exists = True
         self.assessments.append(assessment)
 
     def add_inter_assessment(self, assessment: Assessment) -> None:
-        self.exists = True
         self.inter_assessments.append(assessment)
 
     @property

@@ -12,6 +12,12 @@
     weight: 1
     params:
       minimum: 1
+  inter_assessments:
+  - name: more_commits_bonus
+    weight: 0.2
+    params:
+      bonuses: [10, 5, 0, -5, -10]
+
 
   # - check_commit_msg_pten
   # - check_github_noreply_email
