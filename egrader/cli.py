@@ -4,15 +4,9 @@ import sys
 from sh import ErrorReturnCode
 
 from .assess import assess
-from .common import (
-    OPT_E_LONG,
-    OPT_E_OVWR,
-    OPT_E_SHORT,
-    OPT_E_STOP,
-    OPT_E_UPDT,
-    LoadPluginError,
-)
+from .common import OPT_E_LONG, OPT_E_OVWR, OPT_E_SHORT, OPT_E_STOP, OPT_E_UPDT
 from .fetch import fetch
+from .plugins_helper import LoadPluginError, list_plugins
 from .report import report
 
 
@@ -88,9 +82,13 @@ def main():
         "assess_folder",
         metavar="ASSESS_FOLDER",
         help="Folder where assessment data is located",
-        nargs="?",
+        nargs=1,
     )
     parser_report.set_defaults(func=report)
+
+    # Create the parser for the "plugins" command
+    parser_plugins = subparsers.add_parser("plugins", help="list available plugins")
+    parser_plugins.set_defaults(func=list_plugins)
 
     # Parse command line arguments
     args = parser.parse_args()

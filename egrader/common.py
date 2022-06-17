@@ -1,6 +1,6 @@
-from importlib.metadata import EntryPoints, entry_points
+from inspect import getdoc
 from pathlib import Path
-from typing import AbstractSet, Any, Dict, Final, List
+from typing import Any, Dict, Final, List
 
 import requests
 import validators
@@ -169,30 +169,14 @@ def get_assessed_students_fp(assess_fp: Path) -> Path:
     return assess_fp.joinpath(FILE_ASSESSED_STUDENTS)
 
 
-class LoadPluginError(Exception):
-    """Error raised when a required plugin fails to load."""
+def get_desc(func):
+    """Get a short description of the assessment function."""
 
+    desc = getdoc(func)
 
-def load_plugin_functions(
-    plugin_group: str, required: AbstractSet[str]
-) -> Dict[str, Any]:
-    """Load required plugins from the specified plugin group."""
+    if desc is not None and len(desc) > 0:
+        desc = desc.split("\n")[0]
+    else:
+        desc = "Unavailable"
 
-    # Load plugins
-    plugins: EntryPoints = entry_points(group=plugin_group)
-
-    # Set of existing plugin names
-    plugin_names: AbstractSet[str] = {plugin.name for plugin in plugins}
-
-    # Are there any required plugins not in the existing plugins set?
-    plugins_not_found = required - plugin_names
-    if len(plugins_not_found) > 0:
-        raise LoadPluginError(f"Required plugins {plugins_not_found} not found.")
-
-    # Load required plugins
-    plugin_functions: Dict[str, Any] = {}
-    for plugin in plugins:
-        if plugin.name in required:
-            plugin_functions[plugin.name] = plugin.load()
-
-    return plugin_functions
+    return desc

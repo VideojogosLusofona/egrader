@@ -1,4 +1,3 @@
-from inspect import getdoc
 from pathlib import Path
 from typing import Any, Dict, List, MutableSet
 
@@ -9,7 +8,12 @@ from .common import (
     check_required_fp_exists,
     get_assess_fp,
     get_assessed_students_fp,
+    get_desc,
     get_valid_students_git_fp,
+)
+from .plugins_helper import (
+    PLUGINS_ASSESS_INTER_REPO,
+    PLUGINS_ASSESS_REPO,
     load_plugin_functions,
 )
 from .yaml import load_yaml, save_yaml
@@ -53,7 +57,7 @@ def assess(args) -> None:
 
     # Load required assessment plugins as specified by the rules
     assess_functions: Dict[str, Any] = load_plugin_functions(
-        "egrader.assess_repo", required_assessments
+        PLUGINS_ASSESS_REPO, required_assessments
     )
 
     # Initialize student grades list
@@ -131,7 +135,7 @@ def assess(args) -> None:
 
     # Load required inter-assessment plugins as specified by the rules
     inter_assess_functions: Dict[str, Any] = load_plugin_functions(
-        "egrader.assess_inter_repo", required_inter_assessments
+        PLUGINS_ASSESS_INTER_REPO, required_inter_assessments
     )
 
     # Apply intra-repository assessments
@@ -169,16 +173,3 @@ def assess(args) -> None:
 
     # Save list of assessed students to yaml file
     save_yaml(get_assessed_students_fp(assess_fp), assessed_students)
-
-
-def get_desc(func):
-    """Get a short description of the assessment function."""
-
-    desc = getdoc(func)
-
-    if desc is not None and len(desc) > 0:
-        desc = desc.split("\n")[0]
-    else:
-        desc = "Unavailable"
-
-    return desc
