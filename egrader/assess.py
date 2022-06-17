@@ -1,6 +1,6 @@
 from inspect import getdoc
 from pathlib import Path
-from typing import Dict, List, MutableSet
+from typing import Any, Dict, List, MutableSet
 
 from .common import (
     AssessedRepo,
@@ -52,7 +52,7 @@ def assess(args) -> None:
     }
 
     # Load required assessment plugins as specified by the rules
-    assess_functions = load_plugin_functions(
+    assess_functions: Dict[str, Any] = load_plugin_functions(
         "egrader.assess_repo", required_assessments
     )
 
@@ -79,6 +79,9 @@ def assess(args) -> None:
             # the specified assessments
             if rule["repo"] in student_git.repos:
 
+                # Get the student's repository local path
+                assessed_repo.local_path = student_git.repos[rule["repo"]]
+
                 # Append repository being assessed to dictionary of repositories
                 # by name (will be required later for inter-repository assessments)
                 repos_by_name[rule["repo"]].append(assessed_repo)
@@ -94,12 +97,11 @@ def assess(args) -> None:
                         assess_fun = assess_functions[assess_rule["name"]]
                         assess_params = assess_rule["params"]
 
-                        # Get the student's repository local path
-                        repo_local_path = student_git.repos[rule["repo"]]
-
                         # Perform assessment and obtain the assessment's grade
                         # between 0 and 1
-                        assess_grade = assess_fun(repo_local_path, **assess_params)
+                        assess_grade = assess_fun(
+                            assessed_repo.local_path, **assess_params
+                        )
 
                         # Create assessment object
                         assessment = Assessment(
@@ -128,14 +130,43 @@ def assess(args) -> None:
     }
 
     # Load required inter-assessment plugins as specified by the rules
-    inter_assess_functions = load_plugin_functions(
+    inter_assess_functions: Dict[str, Any] = load_plugin_functions(
         "egrader.assess_inter_repo", required_inter_assessments
     )
 
     # Apply intra-repository assessments
     for rule in rules:
-        if "inter-assignments" in rule:
-            pass  # repos_by_name[rule["name"]]
+        if "inter-assessments" in rule:
+            for inter_assessments in rule["inter-assessments"]:
+
+                repos_with_name: List[AssessedRepo] = repos_by_name[rule["name"]]
+
+                for inter_assess_rule in inter_assessments:
+
+                    inter_assess_fun = inter_assess_functions[inter_assess_rule["name"]]
+                    inter_assess_params = inter_assess_rule["params"]
+
+                    # Perform inter-repo assessment and obtain the assessment's
+                    # grade between 0 and 1
+                    inter_assess_grades = inter_assess_fun(
+                        [sr.local_path for sr in repos_with_name], **inter_assess_params
+                    )
+
+                    # Create assessments (one per repos with the current name)
+                    assessments = [
+                        Assessment(
+                            assess_rule["name"],
+                            get_desc(assess_fun),
+                            assess_params,
+                            assess_rule["weight"],
+                            iag,
+                        )
+                        for iag in inter_assess_grades
+                    ]
+
+                    # Add assessments to each repo with the current name
+                    for ar, a in zip(repos_with_name, assessments):
+                        ar.add_inter_assessment(a)
 
     # Save list of assessed students to yaml file
     save_yaml(get_assessed_students_fp(assess_fp), assessed_students)

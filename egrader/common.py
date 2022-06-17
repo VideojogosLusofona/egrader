@@ -83,32 +83,36 @@ class AssessedRepo:
         # Set instance variables
         self.name: str = name
         self.weight: float = weight
-        self.grade_raw: float = 0
-        self.inter_repo_mod: float = 1  # Unused for now
         self.assessments: List[Assessment] = []
-        self.exists = False
+        self.inter_assessments: List[Assessment] = []
+        self.local_path: str | None = None
 
     def __repr__(self) -> str:
-        return (
-            "%s(name=%r, weight=%r, grade_raw=%r, inter_repo_mod=%r, assessments=%r)"
-            % (
-                self.__class__.__name__,
-                self.name,
-                self.weight,
-                self.grade_raw,
-                self.inter_repo_mod,
-                self.assessments,
-            )
+        return "%s(name=%r, weight=%r, assessments=%r, inter_assessments=%r)" % (
+            self.__class__.__name__,
+            self.name,
+            self.weight,
+            self.assessments,
+            self.inter_assessments,
         )
 
     def add_assessment(self, assessment: Assessment) -> None:
         self.exists = True
         self.assessments.append(assessment)
-        self.grade_raw += assessment.grade_final
+
+    def add_inter_assessment(self, assessment: Assessment) -> None:
+        self.exists = True
+        self.inter_assessments.append(assessment)
 
     @property
     def grade_final(self) -> float:
-        return self.grade_raw * self.weight * self.inter_repo_mod
+        return self.grade_raw * self.weight
+
+    @property
+    def grade_raw(self) -> float:
+        return sum([a.grade_final for a in self.assessments]) + sum(
+            [a.grade_final for a in self.inter_assessments]
+        )
 
 
 class AssessedStudent:
@@ -117,7 +121,6 @@ class AssessedStudent:
     def __init__(self, sid: str) -> None:
         # Set instance variables
         self.sid: str = sid
-        self.grade: float = 0
         self.assessed_repos: List[AssessedRepo] = []
 
     def __repr__(self) -> str:
@@ -130,7 +133,10 @@ class AssessedStudent:
 
     def add_assessed_repo(self, assessed_repo: AssessedRepo) -> None:
         self.assessed_repos.append(assessed_repo)
-        self.grade += assessed_repo.grade_final
+
+    @property
+    def grade(self):
+        return sum([r.grade_final for r in self.assessed_repos])
 
 
 def check_required_fp_exists(fp_to_check: Path) -> None:
