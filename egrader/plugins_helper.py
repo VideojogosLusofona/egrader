@@ -8,6 +8,10 @@ PLUGINS_ASSESS_INTER_REPO: Final[str] = "egrader.assess_inter_repo"
 PLUGINS_REPORT: Final[str] = "egrader.report"
 
 
+class LoadPluginError(Exception):
+    """Error raised when a required plugin fails to load."""
+
+
 def list_plugins(args):
     """List available plugins."""
 
@@ -25,9 +29,6 @@ def list_plugins(args):
             print(f"\t{plugin.name}\t{get_desc(plugin.load())}")
         print()
 
-class LoadPluginError(Exception):
-    """Error raised when a required plugin fails to load."""
-
 
 def load_plugin_functions(
     plugin_group: str, required: AbstractSet[str]
@@ -41,7 +42,7 @@ def load_plugin_functions(
     plugin_names: AbstractSet[str] = {plugin.name for plugin in plugins}
 
     # Are there any required plugins not in the existing plugins set?
-    plugins_not_found = required - plugin_names
+    plugins_not_found: AbstractSet[str] = required - plugin_names
     if len(plugins_not_found) > 0:
         raise LoadPluginError(f"Required plugins {plugins_not_found} not found.")
 
@@ -52,3 +53,19 @@ def load_plugin_functions(
             plugin_functions[plugin.name] = plugin.load()
 
     return plugin_functions
+
+
+def load_plugin_function(plugin_group: str, plugin_name: str) -> Any:
+    """Load a specific plugin function."""
+
+    # Obtain the specified plugin entry point
+    plugins: EntryPoints = entry_points(group=plugin_group, name=plugin_name)
+
+    # If plugin no found, raise error
+    if len(plugins) == 0:
+        raise LoadPluginError(
+            f"Plugin '{plugin_name}' not found in '{plugin_group}' group"
+        )
+
+    # Otherwise, return plugin function
+    return plugins[0].load()

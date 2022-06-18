@@ -6,6 +6,7 @@ from sh import ErrorReturnCode
 from .assess import assess
 from .common import OPT_E_LONG, OPT_E_OVWR, OPT_E_SHORT, OPT_E_STOP, OPT_E_UPDT
 from .fetch import fetch
+from .plugins.report import report_stdout_basic
 from .plugins_helper import LoadPluginError, list_plugins
 from .report import report
 
@@ -83,6 +84,21 @@ def main():
         metavar="ASSESS_FOLDER",
         help="Folder where assessment data is located",
         nargs=1,
+    )
+    default_report = report_stdout_basic.__name__[len(report.__name__) + 1 :]
+    parser_report.add_argument(
+        "report_type",
+        metavar="REPORT_TYPE",
+        help="Type of report, depends on available plugins (defaults to "
+        f"{default_report})",
+        default=default_report,
+        nargs="?",
+    )
+    parser_report.add_argument(
+        "report_args",
+        metavar="REPORT_ARGS",
+        help="Report arguments, depend on the selected report type",
+        nargs="*",
     )
     parser_report.set_defaults(func=report)
 

@@ -143,12 +143,18 @@ def check_required_fp_exists(fp_to_check: Path) -> None:
         raise FileNotFoundError(f"File '{fp_to_check}' does not exist!")
 
 
-def get_assess_fp(assess_folder: str | None, rules_file: Path) -> Path:
+def get_assess_fp(assess_folder: str | None, rules_file: Path | None = None) -> Path:
     """Determine assessment folder path given by user or get it from rules file name."""
     if assess_folder is not None:
         return Path(assess_folder)
-    else:
+    elif rules_file is not None:
         return Path(f"{FOLDER_ASSESS_DEFAULT_PREFIX}{rules_file.stem}")
+    else:
+        # This should not be possible
+        raise AssertionError(
+            f"{get_assess_fp.__name__} cannot be callable with "
+            "both parameters set to None"
+        )
 
 
 def get_student_repo_fp(base_fp: Path, student_id: str, repo_name: str) -> Path:
