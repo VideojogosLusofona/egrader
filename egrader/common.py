@@ -103,6 +103,9 @@ class AssessedRepo:
     def add_inter_assessment(self, assessment: Assessment) -> None:
         self.inter_assessments.append(assessment)
 
+    def is_empty(self) -> bool:
+        return len(self.assessments) + len(self.inter_assessments) == 0
+
     @property
     def grade_final(self) -> float:
         return self.grade_raw * self.weight
@@ -123,10 +126,9 @@ class AssessedStudent:
         self.assessed_repos: List[AssessedRepo] = []
 
     def __repr__(self) -> str:
-        return "%s(sid=%r, grade=%r, assessed_repos=%r)" % (
+        return "%s(sid=%r, assessed_repos=%r)" % (
             self.__class__.__name__,
             self.sid,
-            self.grade,
             self.assessed_repos,
         )
 

@@ -124,5 +124,4 @@ def main():
             raise e
         return 1
     else:
-        print("Program terminated successfully.")
         return 0
