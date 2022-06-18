@@ -1,7 +1,7 @@
 import shutil
-from collections.abc import Sequence
+from argparse import Namespace
 from pathlib import Path
-from typing import List
+from typing import List, Sequence
 
 from yarl import URL
 
@@ -11,6 +11,7 @@ from .common import (
     OPT_E_SHORT,
     OPT_E_STOP,
     StudentGit,
+    check_empty_args,
     check_required_fp_exists,
     get_assess_fp,
     get_student_repo_fp,
@@ -20,8 +21,11 @@ from .git import GitError, git, git_at
 from .yaml import load_yaml, save_yaml
 
 
-def fetch(args) -> None:
+def fetch(args: Namespace, extra_args: Sequence[str]) -> None:
     """Fetch operation: verify Git URLs, clone or update all repositories."""
+
+    # extra_args should be empty
+    check_empty_args(extra_args)
 
     # Determine file paths for Git URLs and rules files
     urls_fp: Path = Path(args.urls_file[0])

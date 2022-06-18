@@ -1,7 +1,8 @@
+from argparse import Namespace
 from importlib.metadata import EntryPoints, entry_points
-from typing import AbstractSet, Any, Dict, Final
+from typing import AbstractSet, Any, Dict, Final, Sequence
 
-from .common import get_desc
+from .common import check_empty_args, get_desc
 
 PLUGINS_ASSESS_REPO: Final[str] = "egrader.assess_repo"
 PLUGINS_ASSESS_INTER_REPO: Final[str] = "egrader.assess_inter_repo"
@@ -12,21 +13,24 @@ class LoadPluginError(Exception):
     """Error raised when a required plugin fails to load."""
 
 
-def list_plugins(args):
+def list_plugins(args: Namespace, extra_args: Sequence[str]):
     """List available plugins."""
 
+    # extra_args should be empty
+    check_empty_args(extra_args)
+
     plugin_types = (
-        ("Repository assessment plugins", PLUGINS_ASSESS_REPO),
-        ("Inter-repository assessment plugins", PLUGINS_ASSESS_INTER_REPO),
-        ("Reporting plugins", PLUGINS_REPORT),
+        (":: Repository assessment plugins", PLUGINS_ASSESS_REPO),
+        (":: Inter-repository assessment plugins", PLUGINS_ASSESS_INTER_REPO),
+        (":: Reporting plugins", PLUGINS_REPORT),
     )
 
     for plugin_type in plugin_types:
 
         plugins: EntryPoints = entry_points(group=plugin_type[1])
-        print(f"{plugin_type[0]}:")
+        print(f"{plugin_type[0]}\n")
         for plugin in plugins:
-            print(f"\t{plugin.name}\t{get_desc(plugin.load())}")
+            print(f"\t{plugin.name}\n\t\t{get_desc(plugin.load())}")
         print()
 
 

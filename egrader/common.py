@@ -1,6 +1,7 @@
+from argparse import ArgumentError
 from inspect import getdoc
 from pathlib import Path
-from typing import Any, Dict, Final, List
+from typing import Any, Dict, Final, List, Sequence
 
 import requests
 import validators
@@ -175,10 +176,10 @@ def get_assessed_students_fp(assess_fp: Path) -> Path:
     return assess_fp.joinpath(FILE_ASSESSED_STUDENTS)
 
 
-def get_desc(func):
+def get_desc(func) -> str:
     """Get a short description of the assessment function."""
 
-    desc = getdoc(func)
+    desc: str | None = getdoc(func)
 
     if desc is not None and len(desc) > 0:
         desc = desc.split("\n")[0]
@@ -186,3 +187,10 @@ def get_desc(func):
         desc = "Unavailable"
 
     return desc
+
+
+def check_empty_args(args: Sequence[str]) -> None:
+    """Check that argument list is empty, otherwise raise error."""
+
+    if len(args) > 0:
+        raise ArgumentError(None, f"Invalid arguments: {', '.join(args)}")

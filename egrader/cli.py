@@ -1,5 +1,5 @@
-import argparse
 import sys
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentError, ArgumentParser
 
 from sh import ErrorReturnCode
 
@@ -17,9 +17,9 @@ def main():
     """
 
     # Create an argument parser
-    parser = argparse.ArgumentParser(
+    parser = ArgumentParser(
         description="Exercise Grader",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        formatter_class=ArgumentDefaultsHelpFormatter,
     )
 
     # Debug flag for showing full stack traces when errors occur
@@ -88,17 +88,10 @@ def main():
     default_report = report_stdout_basic.__name__[len(report.__name__) + 1 :]
     parser_report.add_argument(
         "report_type",
-        metavar="REPORT_TYPE",
-        help="Type of report, depends on available plugins (defaults to "
-        f"{default_report})",
+        metavar="REPORT_TYPE [REPORT_ARGS ...]",
+        help=f"Type of report and report arguments (defaults to {default_report})",
         default=default_report,
         nargs="?",
-    )
-    parser_report.add_argument(
-        "report_args",
-        metavar="REPORT_ARGS",
-        help="Report arguments, depend on the selected report type",
-        nargs="*",
     )
     parser_report.set_defaults(func=report)
 
@@ -107,11 +100,11 @@ def main():
     parser_plugins.set_defaults(func=list_plugins)
 
     # Parse command line arguments
-    args = parser.parse_args()
+    args = parser.parse_known_args()
 
     # Invoke function to perform selected command
     try:
-        args.func(args)
+        args[0].func(args[0], args[1])
     except (
         FileNotFoundError,
         FileExistsError,
@@ -120,7 +113,13 @@ def main():
         LoadPluginError,
     ) as e:
         print(e.args[0], file=sys.stderr)
-        if args.debug:
+        if args[0].debug:
+            print("-------- Exception details --------", file=sys.stderr)
+            raise e
+        return 1
+    except ArgumentError as e:
+        print(e.message, file=sys.stderr)
+        if args[0].debug:
             print("-------- Exception details --------", file=sys.stderr)
             raise e
         return 1

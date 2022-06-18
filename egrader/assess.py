@@ -1,10 +1,12 @@
+from argparse import Namespace
 from pathlib import Path
-from typing import Any, Dict, List, MutableSet
+from typing import Any, Dict, List, MutableSet, Sequence
 
 from .common import (
     AssessedRepo,
     AssessedStudent,
     Assessment,
+    check_empty_args,
     check_required_fp_exists,
     get_assess_fp,
     get_assessed_students_fp,
@@ -19,8 +21,11 @@ from .plugins_helper import (
 from .yaml import load_yaml, save_yaml
 
 
-def assess(args) -> None:
+def assess(args: Namespace, extra_args: Sequence[str]) -> None:
     """Perform student assessment"""
+
+    # extra_args should be empty
+    check_empty_args(extra_args)
 
     # Determine rules file path
     rules_fp: Path = Path(args.rules_file[0])
