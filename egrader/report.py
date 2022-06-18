@@ -2,25 +2,16 @@ from argparse import Namespace
 from pathlib import Path
 from typing import Sequence, cast
 
-from .common import (
-    FILE_ASSESSED_STUDENTS,
-    AssessedStudent,
-    check_required_fp_exists,
-    get_assess_fp,
-)
+from .common import AssessedStudent, check_required_fp_exists, get_assessed_students_fp
 from .plugins_helper import PLUGINS_REPORT, load_plugin_function
 from .yaml import load_yaml
 
 
-def report(args: Namespace, extra_args: Sequence[str]) -> None:
+def report(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
     """Generate an assessment report."""
 
-    # Determine assessment folder, either given by user or we extract it from
-    # the rules file name
-    assess_folder_fp: Path = get_assess_fp(args.assess_folder[0], None)
-
     # Determine report file path
-    assess_file_fp: Path = assess_folder_fp.joinpath(FILE_ASSESSED_STUDENTS)
+    assess_file_fp: Path = get_assessed_students_fp(assess_fp)
 
     # Check if assessment file exists, and if not, quit
     check_required_fp_exists(assess_file_fp)
@@ -34,4 +25,4 @@ def report(args: Namespace, extra_args: Sequence[str]) -> None:
     report_fun = load_plugin_function(PLUGINS_REPORT, args.report_type)
 
     # Invoke reporting function with the specified arguments, if any
-    report_fun(assessed_students, extra_args)
+    report_fun(assess_fp, assessed_students, extra_args)

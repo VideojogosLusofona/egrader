@@ -1,5 +1,7 @@
 import sys
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentError, ArgumentParser
+from pathlib import Path
+from typing import Final
 
 from sh import ErrorReturnCode
 
@@ -9,6 +11,10 @@ from .fetch import fetch
 from .plugins.report import report_stdout_basic
 from .plugins_helper import LoadPluginError, list_plugins
 from .report import report
+
+_ASSESS_FOLDER_ATTR: Final[str] = "assess_folder"
+_RULES_FILE_ATTR: Final[str] = "rules_file"
+_FOLDER_ASSESS_DEFAULT_PREFIX: Final[str] = "out_"
 
 
 def main():
@@ -50,11 +56,14 @@ def main():
         nargs=1,
     )
     parser_fetch.add_argument(
-        "rules_file", metavar="RULES", help="assessment rules in YAML format", nargs=1
+        _RULES_FILE_ATTR,
+        metavar=_RULES_FILE_ATTR.upper(),
+        help="assessment rules in YAML format",
+        nargs=1,
     )
     parser_fetch.add_argument(
-        "assess_folder",
-        metavar="ASSESS_FOLDER",
+        _ASSESS_FOLDER_ATTR,
+        metavar=_ASSESS_FOLDER_ATTR.upper(),
         help="Folder where assessment data will be placed (defaults to RULES "
         "minus yaml extension)",
         nargs="?",
@@ -64,11 +73,14 @@ def main():
     # Create the parser for the "assess" command
     parser_assess = subparsers.add_parser("assess", help="perform assessment")
     parser_assess.add_argument(
-        "rules_file", metavar="RULES", help="assessment rules in YAML format", nargs=1
+        _RULES_FILE_ATTR,
+        metavar=_RULES_FILE_ATTR.upper(),
+        help="assessment rules in YAML format",
+        nargs=1,
     )
     parser_assess.add_argument(
-        "assess_folder",
-        metavar="ASSESS_FOLDER",
+        _ASSESS_FOLDER_ATTR,
+        metavar=_ASSESS_FOLDER_ATTR.upper(),
         help="Folder where assessment data is located (defaults to RULES "
         "minus yaml extension)",
         nargs="?",
@@ -80,8 +92,8 @@ def main():
         "report", help="generate an assessment report"
     )
     parser_report.add_argument(
-        "assess_folder",
-        metavar="ASSESS_FOLDER",
+        _ASSESS_FOLDER_ATTR,
+        metavar=_ASSESS_FOLDER_ATTR.upper(),
         help="Folder where assessment data is located",
         nargs=1,
     )
@@ -102,9 +114,26 @@ def main():
     # Parse command line arguments
     args = parser.parse_known_args()
 
+    # Determine assessment folder
+    assess_folder = getattr(args[0], _ASSESS_FOLDER_ATTR, None)
+    rules_file = getattr(args[0], _RULES_FILE_ATTR, None)
+
+    if assess_folder is None and rules_file is None:
+        # This should not be possible
+        raise AssertionError(
+            f"{_ASSESS_FOLDER_ATTR.upper()} and {_RULES_FILE_ATTR.upper()} "
+            "parameters cannot be None simultaneously!"
+        )
+
+    # Assessment folder path can be given by user or obtained from the rules file name
+    if assess_folder is not None:
+        assess_fp = Path(assess_folder[0])
+    elif rules_file is not None:
+        assess_fp = Path(f"{_FOLDER_ASSESS_DEFAULT_PREFIX}{Path(rules_file[0]).stem}")
+
     # Invoke function to perform selected command
     try:
-        args[0].func(args[0], args[1])
+        args[0].func(assess_fp, args[0], args[1])
     except (
         FileNotFoundError,
         FileExistsError,

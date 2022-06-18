@@ -8,7 +8,6 @@ from .common import (
     Assessment,
     check_empty_args,
     check_required_fp_exists,
-    get_assess_fp,
     get_assessed_students_fp,
     get_desc,
     get_valid_students_git_fp,
@@ -21,24 +20,20 @@ from .plugins_helper import (
 from .yaml import load_yaml, save_yaml
 
 
-def assess(args: Namespace, extra_args: Sequence[str]) -> None:
+def assess(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
     """Perform student assessment"""
 
     # extra_args should be empty
     check_empty_args(extra_args)
+
+    # Check if assessment folder exists, and if not, quit
+    check_required_fp_exists(assess_fp)
 
     # Determine rules file path
     rules_fp: Path = Path(args.rules_file[0])
 
     # Check if rules file exists, and if not, quit
     check_required_fp_exists(rules_fp)
-
-    # Determine assessment folder, either given by user or we extract it from
-    # the rules file name
-    assess_fp: Path = get_assess_fp(args.assess_folder, rules_fp)
-
-    # Check if assessment folder exists, and if not, quit
-    check_required_fp_exists(assess_fp)
 
     # Determine file path for valid students Git URL and repos yaml file
     students_git_fp: Path = get_valid_students_git_fp(assess_fp)

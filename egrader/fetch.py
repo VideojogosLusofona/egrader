@@ -13,7 +13,6 @@ from .common import (
     StudentGit,
     check_empty_args,
     check_required_fp_exists,
-    get_assess_fp,
     get_student_repo_fp,
     get_valid_students_git_fp,
 )
@@ -21,7 +20,7 @@ from .git import GitError, git, git_at
 from .yaml import load_yaml, save_yaml
 
 
-def fetch(args: Namespace, extra_args: Sequence[str]) -> None:
+def fetch(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
     """Fetch operation: verify Git URLs, clone or update all repositories."""
 
     # extra_args should be empty
@@ -36,10 +35,6 @@ def fetch(args: Namespace, extra_args: Sequence[str]) -> None:
 
     # Check if rules file exists, and if not, quit
     check_required_fp_exists(rules_fp)
-
-    # Determine assessment output folder, either given by user or we extract it
-    # from the rules file name
-    assess_fp: Path = get_assess_fp(args.assess_folder, rules_fp)
 
     # Determine file path for validated URLs yaml file
     students_git_fp: Path = get_valid_students_git_fp(assess_fp)

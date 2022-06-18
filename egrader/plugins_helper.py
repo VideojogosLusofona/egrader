@@ -1,5 +1,6 @@
 from argparse import Namespace
 from importlib.metadata import EntryPoints, entry_points
+from pathlib import Path
 from typing import AbstractSet, Any, Dict, Final, Sequence
 
 from .common import check_empty_args, get_desc
@@ -13,7 +14,7 @@ class LoadPluginError(Exception):
     """Error raised when a required plugin fails to load."""
 
 
-def list_plugins(args: Namespace, extra_args: Sequence[str]):
+def list_plugins(assess_fp: Path, args: Namespace, extra_args: Sequence[str]):
     """List available plugins."""
 
     # extra_args should be empty
