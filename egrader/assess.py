@@ -9,10 +9,9 @@ from .paths import (
     get_valid_students_git_fp,
 )
 from .plugin import (
-    PLUGINS_ASSESS_INTER_REPO,
-    PLUGINS_ASSESS_REPO,
     get_short_plugin_desc,
-    load_plugin_functions,
+    load_inter_repo_plugin_functions,
+    load_repo_plugin_functions,
 )
 from .types import AssessedRepo, AssessedStudent, Assessment
 from .yaml import load_yaml, save_yaml
@@ -54,9 +53,7 @@ def assess(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
     }
 
     # Load required assessment plugins as specified by the rules
-    assess_functions: Dict[str, Any] = load_plugin_functions(
-        PLUGINS_ASSESS_REPO, required_assessments
-    )
+    assess_functions: Dict[str, Any] = load_repo_plugin_functions(required_assessments)
 
     # Initialize student grades list
     assessed_students: List[AssessedStudent] = []
@@ -132,8 +129,8 @@ def assess(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
     }
 
     # Load required inter-assessment plugins as specified by the rules
-    inter_assess_functions: Dict[str, Any] = load_plugin_functions(
-        PLUGINS_ASSESS_INTER_REPO, required_inter_assessments
+    inter_assess_functions: Dict[str, Any] = load_inter_repo_plugin_functions(
+        required_inter_assessments
     )
 
     # Apply intra-repository assessments

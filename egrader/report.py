@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Sequence, cast
 
 from .paths import check_required_fp_exists, get_assessed_students_fp
-from .plugin import PLUGINS_REPORT, load_plugin_function
+from .plugin import load_report_plugin_function
 from .types import AssessedStudent
 from .yaml import load_yaml
 
@@ -23,7 +23,7 @@ def report(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
     )
 
     # Load plugin function to perform reporting
-    report_fun = load_plugin_function(PLUGINS_REPORT, args.report_type)
+    report_fun = load_report_plugin_function(args.report_type)
 
     # Invoke reporting function with the specified arguments, if any
     report_fun(assess_fp, assessed_students, extra_args)

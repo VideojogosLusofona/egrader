@@ -6,50 +6,12 @@ from typing import AbstractSet, Any, Dict, Final, Sequence
 
 from .cli_lib import check_empty_args
 
-PLUGINS_ASSESS_REPO: Final[str] = "egrader.assess_repo"
-PLUGINS_ASSESS_INTER_REPO: Final[str] = "egrader.assess_inter_repo"
-PLUGINS_REPORT: Final[str] = "egrader.report"
+_PLUGINS_ASSESS_REPO: Final[str] = "egrader.assess_repo"
+_PLUGINS_ASSESS_INTER_REPO: Final[str] = "egrader.assess_inter_repo"
+_PLUGINS_REPORT: Final[str] = "egrader.report"
 
 
-class PluginLoadError(Exception):
-    """Error raised when a required plugin fails to load."""
-
-
-def get_short_plugin_desc(func) -> str:
-    """Get a short description of a plugin."""
-
-    desc: str | None = getdoc(func)
-
-    if desc is not None and len(desc) > 0:
-        desc = desc.split("\n")[0]
-    else:
-        desc = "Unavailable"
-
-    return desc
-
-
-def list_plugins(assess_fp: Path, args: Namespace, extra_args: Sequence[str]):
-    """List available plugins."""
-
-    # extra_args should be empty
-    check_empty_args(extra_args)
-
-    plugin_types = (
-        (":: Repository assessment plugins", PLUGINS_ASSESS_REPO),
-        (":: Inter-repository assessment plugins", PLUGINS_ASSESS_INTER_REPO),
-        (":: Reporting plugins", PLUGINS_REPORT),
-    )
-
-    for plugin_type in plugin_types:
-
-        plugins: EntryPoints = entry_points(group=plugin_type[1])
-        print(f"{plugin_type[0]}\n")
-        for plugin in plugins:
-            print(f"\t{plugin.name}\n\t\t{get_short_plugin_desc(plugin.load())}")
-        print()
-
-
-def load_plugin_functions(
+def _load_plugin_functions(
     plugin_group: str, required: AbstractSet[str]
 ) -> Dict[str, Any]:
     """Load required plugins from the specified plugin group."""
@@ -74,7 +36,7 @@ def load_plugin_functions(
     return plugin_functions
 
 
-def load_plugin_function(plugin_group: str, plugin_name: str) -> Any:
+def _load_plugin_function(plugin_group: str, plugin_name: str) -> Any:
     """Load a specific plugin function."""
 
     # Obtain the specified plugin entry point
@@ -88,3 +50,59 @@ def load_plugin_function(plugin_group: str, plugin_name: str) -> Any:
 
     # Otherwise, return plugin function
     return plugins[0].load()
+
+
+class PluginLoadError(Exception):
+    """Error raised when a required plugin fails to load."""
+
+
+def get_short_plugin_desc(func) -> str:
+    """Get a short description of a plugin."""
+
+    desc: str | None = getdoc(func)
+
+    if desc is not None and len(desc) > 0:
+        desc = desc.split("\n")[0]
+    else:
+        desc = "Unavailable"
+
+    return desc
+
+
+def load_repo_plugin_functions(required: AbstractSet[str]) -> Dict[str, Any]:
+    """Load required plugins from the intra-repository plugin group."""
+
+    return _load_plugin_functions(_PLUGINS_ASSESS_REPO, required)
+
+
+def load_inter_repo_plugin_functions(required: AbstractSet[str]) -> Dict[str, Any]:
+    """Load required plugins from the inter-repository plugin group."""
+
+    return _load_plugin_functions(_PLUGINS_ASSESS_INTER_REPO, required)
+
+
+def load_report_plugin_function(plugin_name: str) -> Any:
+    """Load a report plugin function."""
+
+    return _load_plugin_function(_PLUGINS_REPORT, plugin_name)
+
+
+def list_plugins(assess_fp: Path, args: Namespace, extra_args: Sequence[str]):
+    """List available plugins."""
+
+    # extra_args should be empty
+    check_empty_args(extra_args)
+
+    plugin_types = (
+        (":: Repository assessment plugins", _PLUGINS_ASSESS_REPO),
+        (":: Inter-repository assessment plugins", _PLUGINS_ASSESS_INTER_REPO),
+        (":: Reporting plugins", _PLUGINS_REPORT),
+    )
+
+    for plugin_type in plugin_types:
+
+        plugins: EntryPoints = entry_points(group=plugin_type[1])
+        print(f"{plugin_type[0]}\n")
+        for plugin in plugins:
+            print(f"\t{plugin.name}\n\t\t{get_short_plugin_desc(plugin.load())}")
+        print()
