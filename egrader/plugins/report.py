@@ -1,20 +1,53 @@
-import sys
 from argparse import ArgumentError
 from contextlib import redirect_stdout
 from datetime import datetime
-from io import TextIOWrapper
 from pathlib import Path
-from typing import Final, Sequence, cast
+from typing import Final, Sequence
 
 from ..common import AssessedStudent, check_empty_args, get_student_repo_fp
 
-_FILE_STUDENT_REPORT_: Final[str] = "report.md"
+_FILE_STUDENT_REPORT_MD_: Final[str] = "report.md"
 
 
 def report_markdown_basic(
     assess_fp: Path, assessed_students: Sequence[AssessedStudent], args: Sequence[str]
 ):
     """Generate a basic Markdown assessment report."""
+
+    # Print the report's header
+    def print_header() -> None:
+        print("# Assessment report")
+        print()
+        print(datetime.now().ctime())
+        print()
+
+    # Print the detailed student assessment
+    def print_student(student: AssessedStudent) -> None:
+        print(f"## Student {student.sid}")
+        print()
+        print(f"- Grade: {student.grade}")
+        print()
+        print("### Repositories")
+        print()
+        for repo in student.assessed_repos:
+            print(f"#### {repo.name}")
+            print()
+            print(f"- Weight in grade: {repo.weight}")
+            print(f"- Grade (unweighted): {repo.grade_raw}")
+            print(f"- Final grade: {repo.grade_final}")
+            print()
+            print("##### Assessments")
+            print()
+            if repo.is_empty():
+                print("Repository not available and/or no assessments performed.")
+            for assess in repo.assessments + repo.inter_assessments:
+                print(f"- `{assess.name}`")
+                print(f"  - Description: {assess.description}")
+                print(f"  - Parameters: `{assess.parameters}`")
+                print(f"  - Weight in grade: {assess.weight}")
+                print(f"  - Grade (unweighted): {assess.grade_raw}")
+                print(f"  - Final grade: {assess.grade_final}")
+            print()
 
     # Save report to separate files?
     to_files: bool = False
@@ -25,60 +58,20 @@ def report_markdown_basic(
     elif len(args) >= 1:
         raise ArgumentError(None, f"Invalid arguments: {', '.join(args)}")
 
-    def print_header():
-        print("# Assessment report")
-        print()
-        print(datetime.now().ctime())
-        print()
-
-    if not to_files:
-        print_header()
-
-    for student in assessed_students:
-
-        f: TextIOWrapper
-
-        if to_files:
+    if to_files:
+        # Save individual reports to a file for each student
+        for student in assessed_students:
             report_fp = get_student_repo_fp(
-                assess_fp, student.sid, _FILE_STUDENT_REPORT_
+                assess_fp, student.sid, _FILE_STUDENT_REPORT_MD_
             )
-            f = open(report_fp, "w")
-        else:
-            f = cast(TextIOWrapper, sys.stdout)
-
-        with redirect_stdout(f):
-
-            if to_files:
+            with open(report_fp, "w") as md_file, redirect_stdout(md_file):
                 print_header()
-
-            print(f"## Student {student.sid}")
-            print()
-            print(f"- Grade: {student.grade}")
-            print()
-            print("### Repositories")
-            print()
-            for repo in student.assessed_repos:
-                print(f"#### {repo.name}")
-                print()
-                print(f"- Weight in grade: {repo.weight}")
-                print(f"- Grade (unweighted): {repo.grade_raw}")
-                print(f"- Final grade: {repo.grade_final}")
-                print()
-                print("##### Assessments")
-                print()
-                if repo.is_empty():
-                    print("Repository not available and/or no assessments performed.")
-                for assess in repo.assessments + repo.inter_assessments:
-                    print(f"- `{assess.name}`")
-                    print(f"  - Description: {assess.description}")
-                    print(f"  - Parameters: `{assess.parameters}`")
-                    print(f"  - Weight in grade: {assess.weight}")
-                    print(f"  - Grade (unweighted): {assess.grade_raw}")
-                    print(f"  - Final grade: {assess.grade_final}")
-                print()
-
-        if to_files:
-            f.close()
+                print_student(student)
+    else:
+        # Print report to stdout
+        print_header()
+        for student in assessed_students:
+            print_student(student)
 
 
 def report_stdout_basic(
