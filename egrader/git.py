@@ -9,7 +9,7 @@ class GitError(Exception):
 def git(*args):
     """Run git with the specified arguments."""
     try:
-        return sh_git(*args)
+        return sh_git("--no-pager", *args)
     except ErrorReturnCode as erc:
         raise GitError(
             f"The following error occurred when executing the '{erc.full_cmd}' command:"
