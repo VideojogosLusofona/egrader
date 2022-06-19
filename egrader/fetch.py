@@ -12,11 +12,13 @@ from .common import (
     OPT_E_STOP,
     StudentGit,
     check_empty_args,
+)
+from .git import GitError, git, git_at
+from .paths import (
     check_required_fp_exists,
     get_student_repo_fp,
     get_valid_students_git_fp,
 )
-from .git import GitError, git, git_at
 from .yaml import load_yaml, save_yaml
 
 

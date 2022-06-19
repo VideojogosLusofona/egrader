@@ -7,12 +7,14 @@ from .common import (
     AssessedStudent,
     Assessment,
     check_empty_args,
+    get_desc,
+)
+from .paths import (
     check_required_fp_exists,
     get_assessed_students_fp,
-    get_desc,
     get_valid_students_git_fp,
 )
-from .plugins_helper import (
+from .plugin import (
     PLUGINS_ASSESS_INTER_REPO,
     PLUGINS_ASSESS_REPO,
     load_plugin_functions,

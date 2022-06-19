@@ -4,7 +4,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Final, Sequence
 
-from ..common import AssessedStudent, check_empty_args, get_student_repo_fp
+from ..common import AssessedStudent, check_empty_args
+from ..paths import get_student_repo_fp
 
 _FILE_STUDENT_REPORT_MD_: Final[str] = "report.md"
 

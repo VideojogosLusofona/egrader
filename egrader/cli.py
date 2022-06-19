@@ -8,8 +8,8 @@ from sh import ErrorReturnCode
 from .assess import assess
 from .common import OPT_E_LONG, OPT_E_OVWR, OPT_E_SHORT, OPT_E_STOP, OPT_E_UPDT
 from .fetch import fetch
+from .plugin import LoadPluginError, list_plugins
 from .plugins.report import report_stdout_basic
-from .plugins_helper import LoadPluginError, list_plugins
 from .report import report
 
 _ASSESS_FOLDER_ATTR: Final[str] = "assess_folder"
