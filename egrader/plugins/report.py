@@ -1,10 +1,10 @@
-from argparse import ArgumentError
 from contextlib import redirect_stdout
 from datetime import datetime
 from pathlib import Path
 from typing import Final, Sequence
 
-from ..common import AssessedStudent, check_empty_args
+from ..cli_lib import CLIArgError, check_empty_args
+from ..common import AssessedStudent
 from ..paths import get_student_repo_fp
 
 _FILE_STUDENT_REPORT_MD_: Final[str] = "report.md"
@@ -57,7 +57,7 @@ def report_markdown_basic(
     if len(args) == 1 and args[0] == "-f":
         to_files = True
     elif len(args) >= 1:
-        raise ArgumentError(None, f"Invalid arguments: {', '.join(args)}")
+        raise CLIArgError(f"Invalid arguments: {', '.join(args)}")
 
     if to_files:
         # Save individual reports to a file for each student

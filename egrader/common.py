@@ -1,6 +1,5 @@
-from argparse import ArgumentError
 from inspect import getdoc
-from typing import Any, Dict, Final, List, Sequence
+from typing import Any, Dict, Final, List
 
 import requests
 import validators
@@ -145,10 +144,3 @@ def get_desc(func) -> str:
         desc = "Unavailable"
 
     return desc
-
-
-def check_empty_args(args: Sequence[str]) -> None:
-    """Check that argument list is empty, otherwise raise error."""
-
-    if len(args) > 0:
-        raise ArgumentError(None, f"Invalid arguments: {', '.join(args)}")

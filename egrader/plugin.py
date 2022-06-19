@@ -3,14 +3,15 @@ from importlib.metadata import EntryPoints, entry_points
 from pathlib import Path
 from typing import AbstractSet, Any, Dict, Final, Sequence
 
-from .common import check_empty_args, get_desc
+from .cli_lib import check_empty_args
+from .common import get_desc
 
 PLUGINS_ASSESS_REPO: Final[str] = "egrader.assess_repo"
 PLUGINS_ASSESS_INTER_REPO: Final[str] = "egrader.assess_inter_repo"
 PLUGINS_REPORT: Final[str] = "egrader.report"
 
 
-class LoadPluginError(Exception):
+class PluginLoadError(Exception):
     """Error raised when a required plugin fails to load."""
 
 
@@ -49,7 +50,7 @@ def load_plugin_functions(
     # Are there any required plugins not in the existing plugins set?
     plugins_not_found: AbstractSet[str] = required - plugin_names
     if len(plugins_not_found) > 0:
-        raise LoadPluginError(f"Required plugins {plugins_not_found} not found.")
+        raise PluginLoadError(f"Required plugins {plugins_not_found} not found.")
 
     # Load required plugins
     plugin_functions: Dict[str, Any] = {}
@@ -68,7 +69,7 @@ def load_plugin_function(plugin_group: str, plugin_name: str) -> Any:
 
     # If plugin no found, raise error
     if len(plugins) == 0:
-        raise LoadPluginError(
+        raise PluginLoadError(
             f"Plugin '{plugin_name}' not found in '{plugin_group}' group"
         )
 

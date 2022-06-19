@@ -5,14 +5,8 @@ from typing import List, Sequence
 
 from yarl import URL
 
-from .common import (
-    OPT_E_LONG,
-    OPT_E_OVWR,
-    OPT_E_SHORT,
-    OPT_E_STOP,
-    StudentGit,
-    check_empty_args,
-)
+from .cli_lib import check_empty_args
+from .common import OPT_E_LONG, OPT_E_OVWR, OPT_E_SHORT, OPT_E_STOP, StudentGit
 from .git import GitError, git, git_at
 from .paths import (
     check_required_fp_exists,

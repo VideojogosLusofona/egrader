@@ -1,14 +1,15 @@
 import sys
-from argparse import ArgumentDefaultsHelpFormatter, ArgumentError, ArgumentParser
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from pathlib import Path
 from typing import Final
 
 from sh import ErrorReturnCode
 
 from .assess import assess
+from .cli_lib import CLIArgError
 from .common import OPT_E_LONG, OPT_E_OVWR, OPT_E_SHORT, OPT_E_STOP, OPT_E_UPDT
 from .fetch import fetch
-from .plugin import LoadPluginError, list_plugins
+from .plugin import PluginLoadError, list_plugins
 from .plugins.report import report_stdout_basic
 from .report import report
 
@@ -135,19 +136,14 @@ def main():
     try:
         args[0].func(assess_fp, args[0], args[1])
     except (
+        ErrorReturnCode,
         FileNotFoundError,
         FileExistsError,
+        CLIArgError,
+        PluginLoadError,
         SyntaxError,
-        ErrorReturnCode,
-        LoadPluginError,
     ) as e:
         print(e.args[0], file=sys.stderr)
-        if args[0].debug:
-            print("-------- Exception details --------", file=sys.stderr)
-            raise e
-        return 1
-    except ArgumentError as e:
-        print(e.message, file=sys.stderr)
         if args[0].debug:
             print("-------- Exception details --------", file=sys.stderr)
             raise e

@@ -2,13 +2,8 @@ from argparse import Namespace
 from pathlib import Path
 from typing import Any, Dict, List, MutableSet, Sequence
 
-from .common import (
-    AssessedRepo,
-    AssessedStudent,
-    Assessment,
-    check_empty_args,
-    get_desc,
-)
+from .cli_lib import check_empty_args
+from .common import AssessedRepo, AssessedStudent, Assessment, get_desc
 from .paths import (
     check_required_fp_exists,
     get_assessed_students_fp,
