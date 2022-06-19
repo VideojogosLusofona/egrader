@@ -12,9 +12,9 @@ OPT_E_STOP: Final[str] = "stop"
 OPT_E_UPDT: Final[str] = "update"
 OPT_E_OVWR: Final[str] = "overwrite"
 
-FILE_VALID_STUDENTS_GIT: Final[str] = "validated_git_urls.yml"
-FILE_ASSESSED_STUDENTS: Final[str] = "assessed_students.yml"
-FOLDER_STUDENT_REPOS: Final[str] = "student_repos"
+_FILE_VALID_STUDENTS_GIT_: Final[str] = "validated_git_urls.yml"
+_FILE_ASSESSED_STUDENTS_: Final[str] = "assessed_students.yml"
+_FOLDER_STUDENT_REPOS_: Final[str] = "student_repos"
 
 
 class StudentGit:
@@ -145,22 +145,22 @@ def check_required_fp_exists(fp_to_check: Path) -> None:
         raise FileNotFoundError(f"File '{fp_to_check}' does not exist!")
 
 
-def get_student_repo_fp(base_fp: Path, student_id: str, repo_name: str) -> Path:
+def get_student_repo_fp(assess_fp: Path, student_id: str, repo_name: str) -> Path:
     """Determine the path to a student repository."""
 
-    return base_fp.joinpath(FOLDER_STUDENT_REPOS, student_id, repo_name)
+    return assess_fp.joinpath(_FOLDER_STUDENT_REPOS_, student_id, repo_name)
 
 
 def get_valid_students_git_fp(assess_fp: Path) -> Path:
     """Determine path for valid student Git URLs yaml file."""
 
-    return cast(Path, assess_fp).joinpath(FILE_VALID_STUDENTS_GIT)
+    return cast(Path, assess_fp).joinpath(_FILE_VALID_STUDENTS_GIT_)
 
 
 def get_assessed_students_fp(assess_fp: Path) -> Path:
     """Determine path for student assessments yaml file."""
 
-    return assess_fp.joinpath(FILE_ASSESSED_STUDENTS)
+    return assess_fp.joinpath(_FILE_ASSESSED_STUDENTS_)
 
 
 def get_desc(func) -> str:

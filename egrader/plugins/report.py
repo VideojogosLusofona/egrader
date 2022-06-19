@@ -4,9 +4,11 @@ from contextlib import redirect_stdout
 from datetime import datetime
 from io import TextIOWrapper
 from pathlib import Path
-from typing import Sequence, cast
+from typing import Final, Sequence, cast
 
-from ..common import AssessedStudent, check_empty_args
+from ..common import AssessedStudent, check_empty_args, get_student_repo_fp
+
+_FILE_STUDENT_REPORT_: Final[str] = "report.md"
 
 
 def report_markdown_basic(
@@ -37,7 +39,10 @@ def report_markdown_basic(
         f: TextIOWrapper
 
         if to_files:
-            f = open(f"{student.sid}.md", "w")
+            report_fp = get_student_repo_fp(
+                assess_fp, student.sid, _FILE_STUDENT_REPORT_
+            )
+            f = open(report_fp, "w")
         else:
             f = cast(TextIOWrapper, sys.stdout)
 
@@ -70,7 +75,7 @@ def report_markdown_basic(
                     print(f"  - Weight in grade: {assess.weight}")
                     print(f"  - Grade (unweighted): {assess.grade_raw}")
                     print(f"  - Final grade: {assess.grade_final}")
-                    print()
+                print()
 
         if to_files:
             f.close()

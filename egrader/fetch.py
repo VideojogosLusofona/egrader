@@ -89,7 +89,7 @@ def fetch(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
 
 
 def fetch_repos(
-    base_fp: Path, students_git: Sequence[StudentGit], repos: Sequence[str]
+    assess_fp: Path, students_git: Sequence[StudentGit], repos: Sequence[str]
 ) -> None:
     """Clone or update student repositories"""
 
@@ -102,7 +102,9 @@ def fetch_repos(
 
                 # Determine repo URL and local path
                 repo_url: URL = URL(student_git.url) / repo_name
-                repo_fp: Path = get_student_repo_fp(base_fp, student_git.sid, repo_name)
+                repo_fp: Path = get_student_repo_fp(
+                    assess_fp, student_git.sid, repo_name
+                )
 
                 # Does the repository already exist?
                 if repo_fp.exists():
