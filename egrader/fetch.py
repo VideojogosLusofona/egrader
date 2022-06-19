@@ -10,6 +10,7 @@ from .git import GitError, git, git_at
 from .paths import (
     check_required_fp_exists,
     get_student_repo_fp,
+    get_student_repos_fp,
     get_valid_students_git_fp,
 )
 from .types import StudentGit
@@ -18,6 +19,8 @@ from .yaml import load_yaml, save_yaml
 
 def fetch(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
     """Fetch operation: verify Git URLs, clone or update all repositories."""
+
+    print(f"- Absolute assessment path: {assess_fp.absolute()}.")
 
     # extra_args should be empty
     check_empty_args(extra_args)
@@ -50,7 +53,7 @@ def fetch(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
         elif getattr(args, OPT_E_LONG) == OPT_E_OVWR:
 
             # Delete folder and its contents and recreate it
-            print("Assessment folder already exists, deleting it...")
+            print(f"- Assessment folder already exists at {assess_fp}, deleting it.")
             shutil.rmtree(assess_fp)
             assess_fp.mkdir()
     else:
@@ -77,21 +80,39 @@ def fetch(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
         students_git = load_urls(urls_fp)
 
     # Clone or update student repositories
-    fetch_repos(assess_fp, students_git, [rule["repo"] for rule in repo_rules])
+    n_valid_urls = fetch_repos(
+        assess_fp, students_git, [rule["repo"] for rule in repo_rules]
+    )
+
+    # Determine number of repositories
+    n_repos = sum([s.repo_count for s in students_git])
 
     # Save validated URLs and repositories to avoid rechecking them later with
     # the "-e update" option
     save_yaml(students_git_fp, students_git)
 
+    # Provide feedback to the user
+    print(
+        f"- Fetched {n_repos} repositories from {len(students_git)} students, "
+        f"{n_valid_urls} of which with valid URLs."
+    )
+    print(f"- Repositories saved at {get_student_repos_fp(assess_fp)}.")
+    print(f"- URL and repository validation report available at {students_git_fp}.")
+
 
 def fetch_repos(
     assess_fp: Path, students_git: Sequence[StudentGit], repos: Sequence[str]
-) -> None:
+) -> int:
     """Clone or update student repositories"""
+
+    # Number of valid Git URLs
+    n_valid_urls = 0
 
     # Loop through students
     for student_git in students_git:
         if student_git.valid_url:
+
+            n_valid_urls += 1
 
             # Loop through mandated repos
             for repo_name in repos:
@@ -124,6 +145,8 @@ def fetch_repos(
                     else:
                         # Otherwise add repo location to student object
                         student_git.add_repo(repo_name, str(repo_fp))
+
+    return n_valid_urls
 
 
 def load_urls(urls_fp: Path) -> List[StudentGit]:

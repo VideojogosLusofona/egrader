@@ -1,5 +1,6 @@
 from contextlib import redirect_stdout
 from datetime import datetime
+from io import StringIO
 from pathlib import Path
 from typing import Final, Sequence
 
@@ -12,7 +13,7 @@ _FILE_STUDENT_REPORT_MD_: Final[str] = "report.md"
 
 def report_markdown_basic(
     assess_fp: Path, assessed_students: Sequence[AssessedStudent], args: Sequence[str]
-):
+) -> str:
     """Generate a basic Markdown assessment report."""
 
     # Print the report's header
@@ -50,6 +51,9 @@ def report_markdown_basic(
                 print(f"  - Final grade: {assess.grade_final}")
             print()
 
+    # Report output to main program
+    rep_output: str
+
     # Save report to separate files?
     to_files: bool = False
 
@@ -60,29 +64,47 @@ def report_markdown_basic(
         raise CLIArgError(f"Invalid arguments: {', '.join(args)}")
 
     if to_files:
-        # Save individual reports to a file for each student
-        for student in assessed_students:
-            report_fp = get_student_repo_fp(
-                assess_fp, student.sid, _FILE_STUDENT_REPORT_MD_
-            )
-            with open(report_fp, "w") as md_file, redirect_stdout(md_file):
-                print_header()
-                print_student(student)
+        with StringIO() as out_string:
+            print(f"- Absolute assessment path: {assess_fp.absolute()}.")
+
+            # Save individual reports to a file for each student
+            for student in assessed_students:
+                report_fp = get_student_repo_fp(
+                    assess_fp, student.sid, _FILE_STUDENT_REPORT_MD_
+                )
+                with open(report_fp, "w") as md_file, redirect_stdout(md_file):
+                    print_header()
+                    print_student(student)
+
+                print(
+                    f"- Assessment report for student {student.sid} saved at "
+                    f"{report_fp}.",
+                    file=out_string,
+                )
+
+            rep_output = out_string.getvalue()
+
     else:
-        # Print report to stdout
-        print_header()
-        for student in assessed_students:
-            print_student(student)
+        # Print report to report output string
+        with StringIO() as md_string, redirect_stdout(md_string):
+            print_header()
+            for student in assessed_students:
+                print_student(student)
+            rep_output = md_string.getvalue()
+
+    return rep_output
 
 
 def report_stdout_basic(
     assess_fp: Path, assessed_students: Sequence[AssessedStudent], args: Sequence[str]
-):
+) -> str:
     """Generate a basic assessment report directly to the standard output."""
 
     # args should be empty
     check_empty_args(args)
 
-    for student in assessed_students:
-        print(f"- Student: {student.sid}")
-        print(f"\tGrade: {student.grade}")
+    with StringIO() as out_text, redirect_stdout(out_text):
+        for student in assessed_students:
+            print(f"- Student: {student.sid}")
+            print(f"\tGrade: {student.grade}")
+        return out_text.getvalue()

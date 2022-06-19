@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Final, cast
+from typing import Final
 
 _FILE_VALID_STUDENTS_GIT: Final[str] = "validated_git_urls.yml"
 _FILE_ASSESSED_STUDENTS: Final[str] = "assessed_students.yml"
@@ -18,10 +18,16 @@ def get_student_repo_fp(assess_fp: Path, student_id: str, repo_name: str) -> Pat
     return assess_fp.joinpath(_FOLDER_STUDENT_REPOS, student_id, repo_name)
 
 
+def get_student_repos_fp(assess_fp: Path) -> Path:
+    """Determine the path containing all student repositories."""
+
+    return assess_fp.joinpath(_FOLDER_STUDENT_REPOS)
+
+
 def get_valid_students_git_fp(assess_fp: Path) -> Path:
     """Determine path for valid student Git URLs yaml file."""
 
-    return cast(Path, assess_fp).joinpath(_FILE_VALID_STUDENTS_GIT)
+    return assess_fp.joinpath(_FILE_VALID_STUDENTS_GIT)
 
 
 def get_assessed_students_fp(assess_fp: Path) -> Path:

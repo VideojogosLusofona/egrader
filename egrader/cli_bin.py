@@ -1,5 +1,7 @@
 import sys
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
+from contextlib import redirect_stdout
+from io import StringIO
 from pathlib import Path
 from typing import Final
 
@@ -140,7 +142,9 @@ def main():
 
     # Invoke function to perform selected command
     try:
-        args[0].func(assess_fp, args[0], args[1])
+        with StringIO() as out_stream, redirect_stdout(out_stream):
+            args[0].func(assess_fp, args[0], args[1])
+            out_string = out_stream.getvalue()
     except (
         ErrorReturnCode,
         FileNotFoundError,
@@ -155,4 +159,5 @@ def main():
             raise e
         return 1
     else:
+        print(out_string, end="")
         return 0

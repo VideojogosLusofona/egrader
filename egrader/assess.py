@@ -6,6 +6,7 @@ from .cli_lib import check_empty_args
 from .paths import (
     check_required_fp_exists,
     get_assessed_students_fp,
+    get_student_repos_fp,
     get_valid_students_git_fp,
 )
 from .plugin import (
@@ -166,5 +167,20 @@ def assess(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
                 for ar, a in zip(repos_with_name, assessments):
                     ar.add_inter_assessment(a)
 
+    # Determine file path where to save assessment information
+    assessed_students_fp: Path = get_assessed_students_fp(assess_fp)
+
     # Save list of assessed students to yaml file
-    save_yaml(get_assessed_students_fp(assess_fp), assessed_students)
+    save_yaml(assessed_students_fp, assessed_students)
+
+    # Number of assessments performed
+    n_assessments = sum([s.assessment_count for s in assessed_students])
+
+    # Provide feedback to the user
+    print(f"- Absolute assessment path: {assess_fp.absolute()}.")
+    print(f"- Fetched student repository information from {students_git_fp}")
+    print(
+        f"- Performed {n_assessments} assessments on {len(assessed_students)} "
+        f"student repositories at {get_student_repos_fp(assess_fp)}."
+    )
+    print(f"- Updated {assessed_students_fp}.")

@@ -26,4 +26,8 @@ def report(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
     report_fun = load_report_plugin_function(args.report_type)
 
     # Invoke reporting function with the specified arguments, if any
-    report_fun(assess_fp, assessed_students, extra_args)
+    out_string = report_fun(assess_fp, assessed_students, extra_args)
+
+    # Show report stdout output, if any
+    if out_string is not None:
+        print(out_string, end="")

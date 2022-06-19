@@ -30,6 +30,10 @@ class StudentGit:
     def add_repo(self, repo_name: str, repo_path: str) -> None:
         self.repos[repo_name] = repo_path
 
+    @property
+    def repo_count(self) -> int:
+        return len(self.repos)
+
 
 class Assessment:
     """An already performed assessment."""
@@ -102,6 +106,10 @@ class AssessedRepo:
             [a.grade_final for a in self.inter_assessments]
         )
 
+    @property
+    def assessment_count(self) -> int:
+        return len(self.assessments) + len(self.inter_assessments)
+
 
 class AssessedStudent:
     """An assessed student."""
@@ -122,5 +130,9 @@ class AssessedStudent:
         self.assessed_repos.append(assessed_repo)
 
     @property
-    def grade(self):
+    def grade(self) -> float:
         return sum([r.grade_final for r in self.assessed_repos])
+
+    @property
+    def assessment_count(self) -> int:
+        return sum([r.assessment_count for r in self.assessed_repos])
