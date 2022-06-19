@@ -6,8 +6,14 @@ from typing import Final
 from sh import ErrorReturnCode
 
 from .assess import assess
-from .cli_lib import CLIArgError
-from .common import OPT_E_LONG, OPT_E_OVWR, OPT_E_SHORT, OPT_E_STOP, OPT_E_UPDT
+from .cli_lib import (
+    OPT_E_LONG,
+    OPT_E_OVWR,
+    OPT_E_SHORT,
+    OPT_E_STOP,
+    OPT_E_UPDT,
+    CLIArgError,
+)
 from .fetch import fetch
 from .plugin import PluginLoadError, list_plugins
 from .plugins.report import report_stdout_basic

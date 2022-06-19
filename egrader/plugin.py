@@ -1,10 +1,10 @@
 from argparse import Namespace
 from importlib.metadata import EntryPoints, entry_points
+from inspect import getdoc
 from pathlib import Path
 from typing import AbstractSet, Any, Dict, Final, Sequence
 
 from .cli_lib import check_empty_args
-from .common import get_desc
 
 PLUGINS_ASSESS_REPO: Final[str] = "egrader.assess_repo"
 PLUGINS_ASSESS_INTER_REPO: Final[str] = "egrader.assess_inter_repo"
@@ -13,6 +13,19 @@ PLUGINS_REPORT: Final[str] = "egrader.report"
 
 class PluginLoadError(Exception):
     """Error raised when a required plugin fails to load."""
+
+
+def get_short_plugin_desc(func) -> str:
+    """Get a short description of a plugin."""
+
+    desc: str | None = getdoc(func)
+
+    if desc is not None and len(desc) > 0:
+        desc = desc.split("\n")[0]
+    else:
+        desc = "Unavailable"
+
+    return desc
 
 
 def list_plugins(assess_fp: Path, args: Namespace, extra_args: Sequence[str]):
@@ -32,7 +45,7 @@ def list_plugins(assess_fp: Path, args: Namespace, extra_args: Sequence[str]):
         plugins: EntryPoints = entry_points(group=plugin_type[1])
         print(f"{plugin_type[0]}\n")
         for plugin in plugins:
-            print(f"\t{plugin.name}\n\t\t{get_desc(plugin.load())}")
+            print(f"\t{plugin.name}\n\t\t{get_short_plugin_desc(plugin.load())}")
         print()
 
 

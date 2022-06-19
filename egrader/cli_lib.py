@@ -1,4 +1,10 @@
-from typing import Sequence
+from typing import Final, Sequence
+
+OPT_E_SHORT: Final[str] = "e"
+OPT_E_LONG: Final[str] = "existing"
+OPT_E_STOP: Final[str] = "stop"
+OPT_E_UPDT: Final[str] = "update"
+OPT_E_OVWR: Final[str] = "overwrite"
 
 
 class CLIArgError(Exception):

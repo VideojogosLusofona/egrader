@@ -1,14 +1,7 @@
-from inspect import getdoc
-from typing import Any, Dict, Final, List
+from typing import Any, Dict, List
 
 import requests
 import validators
-
-OPT_E_SHORT: Final[str] = "e"
-OPT_E_LONG: Final[str] = "existing"
-OPT_E_STOP: Final[str] = "stop"
-OPT_E_UPDT: Final[str] = "update"
-OPT_E_OVWR: Final[str] = "overwrite"
 
 
 class StudentGit:
@@ -131,16 +124,3 @@ class AssessedStudent:
     @property
     def grade(self):
         return sum([r.grade_final for r in self.assessed_repos])
-
-
-def get_desc(func) -> str:
-    """Get a short description of the assessment function."""
-
-    desc: str | None = getdoc(func)
-
-    if desc is not None and len(desc) > 0:
-        desc = desc.split("\n")[0]
-    else:
-        desc = "Unavailable"
-
-    return desc

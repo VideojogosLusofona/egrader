@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import Any, Dict, List, MutableSet, Sequence
 
 from .cli_lib import check_empty_args
-from .common import AssessedRepo, AssessedStudent, Assessment, get_desc
 from .paths import (
     check_required_fp_exists,
     get_assessed_students_fp,
@@ -12,8 +11,10 @@ from .paths import (
 from .plugin import (
     PLUGINS_ASSESS_INTER_REPO,
     PLUGINS_ASSESS_REPO,
+    get_short_plugin_desc,
     load_plugin_functions,
 )
+from .types import AssessedRepo, AssessedStudent, Assessment
 from .yaml import load_yaml, save_yaml
 
 
@@ -107,7 +108,7 @@ def assess(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
                         # Create assessment object
                         assessment = Assessment(
                             assess_rule["name"],
-                            get_desc(assess_fun),
+                            get_short_plugin_desc(assess_fun),
                             assess_params,
                             assess_rule["weight"],
                             assess_grade,
@@ -156,7 +157,7 @@ def assess(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
                 assessments = [
                     Assessment(
                         inter_assess_rule["name"],
-                        get_desc(inter_assess_fun),
+                        get_short_plugin_desc(inter_assess_fun),
                         inter_assess_params,
                         inter_assess_rule["weight"],
                         iag,

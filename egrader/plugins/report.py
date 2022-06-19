@@ -4,8 +4,8 @@ from pathlib import Path
 from typing import Final, Sequence
 
 from ..cli_lib import CLIArgError, check_empty_args
-from ..common import AssessedStudent
 from ..paths import get_student_repo_fp
+from ..types import AssessedStudent
 
 _FILE_STUDENT_REPORT_MD_: Final[str] = "report.md"
 

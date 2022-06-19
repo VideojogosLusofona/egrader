@@ -2,9 +2,9 @@ from argparse import Namespace
 from pathlib import Path
 from typing import Sequence, cast
 
-from .common import AssessedStudent
 from .paths import check_required_fp_exists, get_assessed_students_fp
 from .plugin import PLUGINS_REPORT, load_plugin_function
+from .types import AssessedStudent
 from .yaml import load_yaml
 
 
