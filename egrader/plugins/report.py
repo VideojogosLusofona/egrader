@@ -27,7 +27,7 @@ def report_markdown(
     def print_student(student: AssessedStudent) -> None:
         print(f"## Student {student.sid}")
         print()
-        print(f"- Grade: {student.grade}")
+        print(f"- Grade: {student.grade:.3f}")
         print()
         print("### Repositories")
         print()
@@ -36,7 +36,7 @@ def report_markdown(
             print()
             print(f"- Weight in grade: {repo.weight}")
             print(f"- Grade (unweighted): {repo.grade_raw}")
-            print(f"- Final grade: {repo.grade_final}")
+            print(f"- Final grade: {repo.grade_final:.3f}")
             print()
             print("##### Assessments")
             print()
@@ -48,7 +48,7 @@ def report_markdown(
                 print(f"  - Parameters: `{assess.parameters}`")
                 print(f"  - Weight in grade: {assess.weight}")
                 print(f"  - Grade (unweighted): {assess.grade_raw}")
-                print(f"  - Final grade: {assess.grade_final}")
+                print(f"  - Final grade: {assess.grade_final:.3f}")
             print()
 
     # Report output to main program
