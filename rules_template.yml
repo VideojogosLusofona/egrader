@@ -1,6 +1,13 @@
 - repo: LP1Aula01
   weight: 10
   assessments:
+  - name: files_exist
+    weight: 0.4
+    params:
+     filenames:
+     - README.md
+     - .gitignore
+     - fantastic.txt
   - name: repo_exists
     weight: 0.1
   - name: min_commits
@@ -21,14 +28,15 @@
     weight: 1
     params:
       minimum: 1
-  - name: file_exists
+  - name: files_exist
     weight: 0.4
     params:
-     filename: README.md
-  - name: file_exists
-    weight: 0.4
-    params:
-      filename: I_dont_exist.txt
+      filenames:
+      - I_dont_exist.txt
+      - README.md
+      - .gitignore
+      - LICENSE
+      - .git
   - name: commit_date_interval
     weight: 0.12
     params:

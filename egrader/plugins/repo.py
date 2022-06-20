@@ -1,7 +1,9 @@
 from datetime import date, datetime
 from pathlib import Path
+from typing import Sequence
 
 from dateutil.parser import isoparse
+from isort import file
 
 from ..git import git_at
 from .helpers import interpret_datetime
@@ -41,12 +43,15 @@ def assess_repo_exists(repo_path: str) -> float:
     return 1
 
 
-def assess_file_exists(repo_path: str, filename: str) -> float:
-    """Check if a file or folder exists."""
+def assess_files_exist(repo_path: str, filenames: Sequence[str]) -> float:
+    """Check if the files or folders exist."""
 
-    fp = Path(repo_path, filename)
+    n_files_exist = 0
 
-    if fp.exists():
-        return 1
-    else:
-        return 0
+    for filename in filenames:
+        fp = Path(repo_path, filename)
+
+        if fp.exists():
+            n_files_exist += 1
+
+    return n_files_exist / len(filenames)
