@@ -37,6 +37,7 @@
       - .gitignore
       - LICENSE
       - .git
+      - subfolder/another/check.txt
   - name: commit_date_interval
     weight: 0.12
     params:
