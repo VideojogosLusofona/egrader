@@ -95,10 +95,7 @@ def assess(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
                         # Get the plugin function which will perform the assessment
                         # and the respective parameters
                         assess_fun = assess_functions[assess_rule["name"]]
-                        if "params" in assess_rule:
-                            assess_params = assess_rule["params"]
-                        else:
-                            assess_params = {}
+                        assess_params = assess_rule.get("params", {})
 
                         # Perform assessment and obtain the assessment's grade
                         # between 0 and 1
@@ -146,10 +143,7 @@ def assess(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
                 repos_with_name: List[AssessedRepo] = repos_by_name[rule["repo"]]
 
                 inter_assess_fun = inter_assess_functions[inter_assess_rule["name"]]
-                if "params" in inter_assess_rule:
-                    inter_assess_params = inter_assess_rule["params"]
-                else:
-                    inter_assess_params = {}
+                inter_assess_params = inter_assess_rule.get("params", {})
 
                 # Perform inter-repo assessment and obtain the assessment's
                 # grade between 0 and 1
