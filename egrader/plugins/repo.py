@@ -5,14 +5,14 @@ from typing import Sequence
 from dateutil.parser import isoparse
 from isort import file
 
-from ..git import git_at
+from ..git import GitError, git_at
 from .helpers import interpret_datetime
 
 
 def assess_min_commits(repo_path: str, minimum: int) -> float:
     """Check if repository has a minimum number of commits."""
 
-    n_commits = git_at(repo_path, "rev-list", "HEAD", "--count")
+    n_commits = git_at(repo_path, "rev-list", "--all", "--count")
     if int(n_commits) >= minimum:
         return 1
     else:
@@ -24,7 +24,11 @@ def assess_commit_date_interval(
 ) -> float:
     """Check if the last commit was performed on the specified date interval."""
 
-    lc_dt_cmd = git_at(repo_path, "log", "-1", "--date=iso-strict", r"--format=%cd")
+    try:
+        lc_dt_cmd = git_at(repo_path, "log", "-1", "--date=iso-strict", r"--format=%cd")
+    except GitError:
+        return 0
+
     lc_dt_str = lc_dt_cmd.stdout.decode().strip()
     lc_dt: datetime = isoparse(lc_dt_str)
 
