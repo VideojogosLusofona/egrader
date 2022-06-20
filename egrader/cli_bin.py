@@ -62,13 +62,11 @@ def main():
         "urls_file",
         metavar="URLS",
         help="student public Git account URLs file in TSV format",
-        nargs=1,
     )
     parser_fetch.add_argument(
         _RULES_FILE_ATTR,
         metavar=_RULES_FILE_ATTR.upper(),
         help="assessment rules in YAML format",
-        nargs=1,
     )
     parser_fetch.add_argument(
         _ASSESS_FOLDER_ATTR,
@@ -85,7 +83,6 @@ def main():
         _RULES_FILE_ATTR,
         metavar=_RULES_FILE_ATTR.upper(),
         help="assessment rules in YAML format",
-        nargs=1,
     )
     parser_assess.add_argument(
         _ASSESS_FOLDER_ATTR,
@@ -104,7 +101,6 @@ def main():
         _ASSESS_FOLDER_ATTR,
         metavar=_ASSESS_FOLDER_ATTR.upper(),
         help="Folder where assessment data is located",
-        nargs=1,
     )
     default_report = report_stdout_basic.__name__[len(report.__name__) + 1 :]
     parser_report.add_argument(
@@ -136,9 +132,9 @@ def main():
 
     # Assessment folder path can be given by user or obtained from the rules file name
     if assess_folder is not None:
-        assess_fp = Path(assess_folder[0])
+        assess_fp = Path(assess_folder)
     elif rules_file is not None:
-        assess_fp = Path(f"{_FOLDER_ASSESS_DEFAULT_PREFIX}{Path(rules_file[0]).stem}")
+        assess_fp = Path(f"{_FOLDER_ASSESS_DEFAULT_PREFIX}{Path(rules_file).stem}")
 
     # Invoke function to perform selected command
     try:

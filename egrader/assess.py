@@ -28,7 +28,7 @@ def assess(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
     check_required_fp_exists(assess_fp)
 
     # Determine rules file path
-    rules_fp: Path = Path(args.rules_file[0])
+    rules_fp: Path = Path(args.rules_file)
 
     # Check if rules file exists, and if not, quit
     check_required_fp_exists(rules_fp)

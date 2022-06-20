@@ -26,8 +26,8 @@ def fetch(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
     check_empty_args(extra_args)
 
     # Determine file paths for Git URLs and rules files
-    urls_fp: Path = Path(args.urls_file[0])
-    rules_fp: Path = Path(args.rules_file[0])
+    urls_fp: Path = Path(args.urls_file)
+    rules_fp: Path = Path(args.rules_file)
 
     # Check if Git URLs file exists, and if not, quit
     check_required_fp_exists(urls_fp)
