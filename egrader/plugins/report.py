@@ -11,10 +11,10 @@ from ..types import AssessedStudent
 _FILE_STUDENT_REPORT_MD_: Final[str] = "report.md"
 
 
-def report_markdown_basic(
+def report_markdown(
     assess_fp: Path, assessed_students: Sequence[AssessedStudent], args: Sequence[str]
 ) -> str:
-    """Generate a basic Markdown assessment report."""
+    """Generate a Markdown assessment report."""
 
     # Print the report's header
     def print_header() -> None:
@@ -95,10 +95,10 @@ def report_markdown_basic(
     return rep_output
 
 
-def report_stdout_basic(
+def report_basic(
     assess_fp: Path, assessed_students: Sequence[AssessedStudent], args: Sequence[str]
 ) -> str:
-    """Generate a basic assessment report directly to the standard output."""
+    """Generate a very basic assessment report."""
 
     # args should be empty
     check_empty_args(args)
@@ -107,4 +107,19 @@ def report_stdout_basic(
         for student in assessed_students:
             print(f"- Student: {student.sid}")
             print(f"\tGrade: {student.grade}")
+        return out_text.getvalue()
+
+
+def report_tsv(
+    assess_fp: Path, assessed_students: Sequence[AssessedStudent], args: Sequence[str]
+) -> str:
+    """Generate a TSV report with student IDs and grades."""
+
+    # args should be empty
+    check_empty_args(args)
+
+    with StringIO() as out_text, redirect_stdout(out_text):
+        print("student_id\tgrade")
+        for student in assessed_students:
+            print(f"{student.sid}\t{student.grade}")
         return out_text.getvalue()

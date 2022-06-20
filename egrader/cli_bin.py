@@ -18,7 +18,7 @@ from .cli_lib import (
 )
 from .fetch import fetch
 from .plugin import PluginLoadError, list_plugins
-from .plugins.report import report_stdout_basic
+from .plugins.report import report_basic
 from .report import report
 
 _ASSESS_FOLDER_ATTR: Final[str] = "assess_folder"
@@ -102,7 +102,7 @@ def main():
         metavar=_ASSESS_FOLDER_ATTR.upper(),
         help="Folder where assessment data is located",
     )
-    default_report = report_stdout_basic.__name__[len(report.__name__) + 1 :]
+    default_report = report_basic.__name__[len(report.__name__) + 1 :]
     parser_report.add_argument(
         "report_type",
         metavar="REPORT_TYPE [REPORT_ARGS ...]",
