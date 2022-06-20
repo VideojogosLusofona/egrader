@@ -1,6 +1,8 @@
 - repo: LP1Aula01
   weight: 10
   assessments:
+  - name: repo_exists
+    weight: 0.1
   - name: min_commits
     weight: 1
     params:
@@ -13,6 +15,8 @@
 - repo: LP1Semana01
   weight: 10
   assessments:
+  - name: repo_exists
+    weight: 0.1
   - name: min_commits
     weight: 1
     params:

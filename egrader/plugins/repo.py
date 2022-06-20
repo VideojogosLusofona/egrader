@@ -35,6 +35,12 @@ def assess_commit_date_interval(
         return 0
 
 
+def assess_repo_exists(repo_path: str) -> float:
+    """Check if a repository exists (always returns 1)."""
+
+    return 1
+
+
 def assess_file_exists(repo_path: str, filename: str) -> float:
     """Check if a file or folder exists."""
 
