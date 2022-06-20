@@ -5,10 +5,9 @@ from pathlib import Path
 from typing import Final, Sequence
 
 from ..cli_lib import CLIArgError, check_empty_args
-from ..paths import get_student_repo_fp
 from ..types import AssessedStudent
 
-_FILE_STUDENT_REPORT_MD_: Final[str] = "report.md"
+_FOLDER_STUDENT_REPORTS_MD: Final[str] = "reports_md"
 
 
 def report_markdown(
@@ -65,13 +64,18 @@ def report_markdown(
 
     if to_files:
         with StringIO() as out_string:
+
+            # Determine and create folder where to place reports
+            reports_fp = assess_fp.joinpath(_FOLDER_STUDENT_REPORTS_MD)
+            reports_fp.mkdir(exist_ok=True)
+
             print(f"- Absolute assessment path: {assess_fp.absolute()}.")
+            print(f"- Markdown reports saved to {reports_fp}.")
 
             # Save individual reports to a file for each student
             for student in assessed_students:
-                report_fp = get_student_repo_fp(
-                    assess_fp, student.sid, _FILE_STUDENT_REPORT_MD_
-                )
+
+                report_fp = reports_fp.joinpath(f"{student.sid}.md")
                 with open(report_fp, "w") as md_file, redirect_stdout(md_file):
                     print_header()
                     print_student(student)

@@ -3,7 +3,6 @@ from pathlib import Path
 from typing import Sequence
 
 from dateutil.parser import isoparse
-from isort import file
 
 from ..git import GitError, git_at
 from .helpers import interpret_datetime
