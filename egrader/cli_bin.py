@@ -123,7 +123,7 @@ def main():
     assess_folder = getattr(args[0], _ASSESS_FOLDER_ATTR, None)
     rules_file = getattr(args[0], _RULES_FILE_ATTR, None)
 
-    if assess_folder is None and rules_file is None:
+    if assess_folder is None and rules_file is None and args[0].func != list_plugins:
         # This should not be possible
         raise AssertionError(
             f"{_ASSESS_FOLDER_ATTR.upper()} and {_RULES_FILE_ATTR.upper()} "
@@ -135,6 +135,8 @@ def main():
         assess_fp = Path(assess_folder)
     elif rules_file is not None:
         assess_fp = Path(f"{_FOLDER_ASSESS_DEFAULT_PREFIX}{Path(rules_file).stem}")
+    else:
+        assess_fp = None
 
     # Invoke function to perform selected command
     try:
