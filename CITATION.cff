@@ -1,0 +1,52 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: egrader
+message: >-
+  Please cite this software using the metadata from 'preferred-citation'.
+type: software
+authors:
+  - given-names: Nuno
+    family-names: Fachada
+    email: nuno.fachada@ulusofona.pt
+    affiliation: 'Lusófona University, COPELABS'
+    orcid: 'https://orcid.org/0000-0002-8487-5837'
+repository-code: 'https://github.com/VideojogosLusofona/egrader'
+abstract: >-
+  Auto-grader for Git-based programming exercises.
+keywords:
+  - aat
+  - education
+  - autograder
+  - programming
+  - computer science education
+license: GPL-3.0
+preferred-citation:
+  type: conference-paper
+  collection-type: proceedings
+  collection-title: >-
+    Proceedings of the 2020 ACM Conference on Innovation and Technology in
+    Computer Science Education
+  conference:
+    name: ITiCSE '20
+  authors:
+    - given-names: Nuno
+      family-names: Fachada
+      email: nuno.fachada@ulusofona.pt
+      affiliation: 'Lusófona University, COPELABS'
+      orcid: 'https://orcid.org/0000-0002-8487-5837'
+    - given-names: Nélio
+      family-names: Códices
+      email: nelio.codices@ulusofona.pt
+      affiliation: 'Lusófona University, ECATI'
+      orcid: 'https://orcid.org/0000-0001-8682-0410'
+  title: "Top-down Design of a CS Curriculum for a Computer Games BA"
+  doi: 10.1145/3341525.3387378
+  publisher:
+    name: ACM
+  start: 300
+  end: 306
+  month: 6
+  year: 2020
+
