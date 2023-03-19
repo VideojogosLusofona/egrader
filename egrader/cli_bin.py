@@ -1,3 +1,5 @@
+"""The egrader command-line interface."""
+
 import sys
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from contextlib import redirect_stdout
@@ -27,10 +29,7 @@ _FOLDER_ASSESS_DEFAULT_PREFIX: Final[str] = "out_"
 
 
 def main():
-    """
-    This function is called when the script is invoked with the `egrader` command.
-    """
-
+    """Function invoked with the `egrader` command."""
     # Create an argument parser
     parser = ArgumentParser(
         description="Exercise Grader",

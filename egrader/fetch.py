@@ -1,3 +1,5 @@
+"""Functions for fetching code from student repositories."""
+
 import shutil
 from argparse import Namespace
 from pathlib import Path
@@ -19,7 +21,6 @@ from .yaml import load_yaml, save_yaml
 
 def fetch(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
     """Fetch operation: verify Git URLs, clone or update all repositories."""
-
     print(f"- Absolute assessment path: {assess_fp.absolute()}.")
 
     # extra_args should be empty
@@ -40,10 +41,8 @@ def fetch(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
 
     # Check if the assessment output folder exists
     if assess_fp.exists():
-
         # If so, action to take depends on the -e command line option
         if getattr(args, OPT_E_LONG) == OPT_E_STOP:
-
             # Stop processing
             raise FileExistsError(
                 "Assessment folder already exists, stopping operation. Check the "
@@ -51,13 +50,11 @@ def fetch(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
             )
 
         elif getattr(args, OPT_E_LONG) == OPT_E_OVWR:
-
             # Delete folder and its contents and recreate it
             print(f"- Assessment folder already exists at {assess_fp}, deleting it.")
             shutil.rmtree(assess_fp)
             assess_fp.mkdir()
     else:
-
         # Folder doesn't exist, create it
         assess_fp.mkdir()
 
@@ -69,13 +66,11 @@ def fetch(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
 
     # Load student Git URLs
     if students_git_fp.exists():
-
         # If file with validated URLs already exists, load info from there to
         # avoid rechecking the URLs (only with "-e update" option)
         students_git = load_yaml(students_git_fp, safe=False)
 
     else:
-
         # Otherwise load info from original file and validate URLs
         students_git = load_urls(urls_fp)
 
@@ -103,20 +98,17 @@ def fetch(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
 def fetch_repos(
     assess_fp: Path, students_git: Sequence[StudentGit], repos: Sequence[str]
 ) -> int:
-    """Clone or update student repositories"""
-
+    """Clone or update student repositories."""
     # Number of valid Git URLs
     n_valid_urls = 0
 
     # Loop through students
     for student_git in students_git:
         if student_git.valid_url:
-
             n_valid_urls += 1
 
             # Loop through mandated repos
             for repo_name in repos:
-
                 # Determine repo URL and local path
                 repo_url: URL = URL(student_git.url) / repo_name
                 repo_fp: Path = get_student_repo_fp(
@@ -125,7 +117,6 @@ def fetch_repos(
 
                 # Does the repository already exist?
                 if repo_fp.exists():
-
                     # Path exists, only update repository
                     git_at(repo_fp, "pull")
 
@@ -133,7 +124,6 @@ def fetch_repos(
                     student_git.add_repo(repo_name, str(repo_fp))
 
                 else:
-
                     # Repository doesn't exist, do a full clone
                     try:
                         git("clone", repo_url, repo_fp)
@@ -150,17 +140,14 @@ def fetch_repos(
 
 
 def load_urls(urls_fp: Path) -> List[StudentGit]:
-    """Load student Git URLs"""
-
+    """Load student Git URLs."""
     # The student list, initially empty
     students_git: List[StudentGit] = []
 
     # Open Git URLs file
     with open(urls_fp) as urls_file:
-
         # Cycle through each line of the file
         for lno, line in enumerate(urls_file, 1):
-
             # Remove leading and trailing whitespace
             line = line.strip()
 
@@ -172,7 +159,7 @@ def load_urls(urls_fp: Path) -> List[StudentGit]:
             std_url = line.split()
             if len(std_url) != 2:
                 raise SyntaxError(
-                    f"Syntax error in line {lno} of {urls_fp}: " f"'{line}'"
+                    f"Syntax error in line {lno} of {urls_fp}: " f"{line!r}"
                 )
 
             # Create a student instance with it's ID and URL, taken from the line

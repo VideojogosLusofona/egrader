@@ -1,3 +1,5 @@
+"""YAML handling functionality."""
+
 from pathlib import Path
 from typing import Any
 
@@ -5,7 +7,7 @@ import yaml
 
 
 def load_yaml(yaml_fp: Path, safe: bool = True) -> Any:
-    """Load a yaml file"""
+    """Load a yaml file."""
     try:
         with open(yaml_fp, "r") as yaml_file:
             if safe:
@@ -21,8 +23,7 @@ def load_yaml(yaml_fp: Path, safe: bool = True) -> Any:
 
 
 def save_yaml(yaml_fp: Path, data: Any) -> None:
-    """Save a yaml file"""
-
+    """Save a yaml file."""
     yaml_text = yaml.dump(data, Dumper=yaml.CDumper)
     with open(yaml_fp, "w") as yaml_file:
         print(yaml_text, file=yaml_file)

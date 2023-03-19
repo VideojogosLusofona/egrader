@@ -1,3 +1,5 @@
+"""Plug-in handling functionality."""
+
 from argparse import Namespace
 from importlib.metadata import EntryPoints, entry_points
 from inspect import getdoc
@@ -15,7 +17,6 @@ def _load_plugin_functions(
     plugin_group: str, required: AbstractSet[str]
 ) -> Dict[str, Any]:
     """Load required plugins from the specified plugin group."""
-
     # Load plugins
     plugins: EntryPoints = entry_points(group=plugin_group)
 
@@ -38,14 +39,13 @@ def _load_plugin_functions(
 
 def _load_plugin_function(plugin_group: str, plugin_name: str) -> Any:
     """Load a specific plugin function."""
-
     # Obtain the specified plugin entry point
     plugins: EntryPoints = entry_points(group=plugin_group, name=plugin_name)
 
     # If plugin no found, raise error
     if len(plugins) == 0:
         raise PluginLoadError(
-            f"Plugin '{plugin_name}' not found in '{plugin_group}' group"
+            f"Plugin {plugin_name!r} not found in {plugin_group!r} group"
         )
 
     # Otherwise, return plugin function
@@ -58,7 +58,6 @@ class PluginLoadError(Exception):
 
 def get_short_plugin_desc(func) -> str:
     """Get a short description of a plugin."""
-
     desc: str | None = getdoc(func)
 
     if desc is not None and len(desc) > 0:
@@ -71,25 +70,21 @@ def get_short_plugin_desc(func) -> str:
 
 def load_repo_plugin_functions(required: AbstractSet[str]) -> Dict[str, Any]:
     """Load required plugins from the intra-repository plugin group."""
-
     return _load_plugin_functions(_PLUGINS_ASSESS_REPO, required)
 
 
 def load_inter_repo_plugin_functions(required: AbstractSet[str]) -> Dict[str, Any]:
     """Load required plugins from the inter-repository plugin group."""
-
     return _load_plugin_functions(_PLUGINS_ASSESS_INTER_REPO, required)
 
 
 def load_report_plugin_function(plugin_name: str) -> Any:
     """Load a report plugin function."""
-
     return _load_plugin_function(_PLUGINS_REPORT, plugin_name)
 
 
 def list_plugins(assess_fp: Path, args: Namespace, extra_args: Sequence[str]):
     """List available plugins."""
-
     # extra_args should be empty
     check_empty_args(extra_args)
 
@@ -100,7 +95,6 @@ def list_plugins(assess_fp: Path, args: Namespace, extra_args: Sequence[str]):
     )
 
     for plugin_type in plugin_types:
-
         plugins: EntryPoints = entry_points(group=plugin_type[1])
         print(f"{plugin_type[0]}\n")
         for plugin in plugins:

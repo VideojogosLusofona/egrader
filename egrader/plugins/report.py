@@ -1,3 +1,5 @@
+"""Reporting plug-ins."""
+
 from contextlib import redirect_stdout
 from datetime import datetime
 from io import StringIO
@@ -11,9 +13,12 @@ _FOLDER_STUDENT_REPORTS_MD: Final[str] = "reports_md"
 
 
 def report_markdown(
-    assess_fp: Path, assessed_students: Sequence[AssessedStudent], args: Sequence[str]
+    assess_fp: Path,
+    assessed_students: Sequence[AssessedStudent],
+    args: Sequence[str],
 ) -> str:
     """Generate a Markdown assessment report."""
+    # Internal functions
 
     # Print the report's header
     def print_header() -> None:
@@ -64,7 +69,6 @@ def report_markdown(
 
     if to_files:
         with StringIO() as out_string:
-
             # Determine and create folder where to place reports
             reports_fp = assess_fp.joinpath(_FOLDER_STUDENT_REPORTS_MD)
             reports_fp.mkdir(exist_ok=True)
@@ -74,7 +78,6 @@ def report_markdown(
 
             # Save individual reports to a file for each student
             for student in assessed_students:
-
                 report_fp = reports_fp.joinpath(f"{student.sid}.md")
                 with open(report_fp, "w") as md_file, redirect_stdout(md_file):
                     print_header()
@@ -103,7 +106,6 @@ def report_basic(
     assess_fp: Path, assessed_students: Sequence[AssessedStudent], args: Sequence[str]
 ) -> str:
     """Generate a very basic assessment report."""
-
     # args should be empty
     check_empty_args(args)
 
@@ -118,7 +120,6 @@ def report_tsv(
     assess_fp: Path, assessed_students: Sequence[AssessedStudent], args: Sequence[str]
 ) -> str:
     """Generate a TSV report with student IDs and grades."""
-
     # args should be empty
     check_empty_args(args)
 

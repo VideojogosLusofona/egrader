@@ -1,3 +1,5 @@
+"""Assessment functions."""
+
 from argparse import Namespace
 from pathlib import Path
 from typing import Any, Dict, List, MutableSet, Sequence
@@ -19,8 +21,7 @@ from .yaml import load_yaml, save_yaml
 
 
 def assess(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
-    """Perform student assessment"""
-
+    """Perform student assessment."""
     # extra_args should be empty
     check_empty_args(extra_args)
 
@@ -65,20 +66,17 @@ def assess(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
 
     # Apply rules and assessments to each student
     for student_git in students_git:
-
         # Create instance of current student's assessment
         assessed_student: AssessedStudent = AssessedStudent(student_git.sid)
 
         # Loop through rules
         for rule in rules:
-
             # Create an instance of the repository being assessed
             assessed_repo: AssessedRepo = AssessedRepo(rule["repo"], rule["weight"])
 
             # If student has the repository specified in the current rule, apply
             # the specified assessments
             if rule["repo"] in student_git.repos:
-
                 # Get the student's repository local path
                 assessed_repo.local_path = student_git.repos[rule["repo"]]
 
@@ -89,9 +87,7 @@ def assess(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
                 # Loop through the assessments to be made for the current rule's
                 # repository, if any
                 if "assessments" in rule:
-
                     for assess_rule in rule["assessments"]:
-
                         # Get the plugin function which will perform the assessment
                         # and the respective parameters
                         assess_fun = assess_functions[assess_rule["name"]]
@@ -137,9 +133,7 @@ def assess(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
     # Apply intra-repository assessments
     for rule in rules:
         if "inter_assessments" in rule:
-
             for inter_assess_rule in rule["inter_assessments"]:
-
                 repos_with_name: List[AssessedRepo] = repos_by_name[rule["repo"]]
 
                 inter_assess_fun = inter_assess_functions[inter_assess_rule["name"]]
@@ -164,7 +158,7 @@ def assess(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
                 ]
 
                 # Add assessments to each repo with the current name
-                for ar, a in zip(repos_with_name, assessments):
+                for ar, a in zip(repos_with_name, assessments, strict=True):
                     ar.add_inter_assessment(a)
 
     # Determine file path where to save assessment information

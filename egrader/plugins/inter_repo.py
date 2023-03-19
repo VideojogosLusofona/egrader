@@ -1,3 +1,5 @@
+"""Inter-repository plug-ins."""
+
 from typing import List, Sequence, Tuple
 
 from ..git import git_at
@@ -7,7 +9,6 @@ def assess_more_commits_bonus(
     repo_paths: Sequence[str], bonuses: Sequence[float]
 ) -> Sequence[float]:
     """Add bonuses to repositories with more commits."""
-
     # Number of repositories to inter-assess
     n_repos = len(repo_paths)
 
@@ -32,7 +33,7 @@ def assess_more_commits_bonus(
 
     # Associate the repo indexes (sorted by number of commits) with the
     # user-specified bonuses
-    idx_bonus = list(zip([ic[0] for ic in idx_commits], bonus_lst))
+    idx_bonus = list(zip([ic[0] for ic in idx_commits], bonus_lst, strict=True))
 
     # Resort bonuses by repo index
     idx_bonus.sort()

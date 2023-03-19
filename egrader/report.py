@@ -1,3 +1,5 @@
+"""Reporting functionality."""
+
 from argparse import Namespace
 from pathlib import Path
 from typing import Sequence, cast
@@ -10,7 +12,6 @@ from .yaml import load_yaml
 
 def report(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
     """Generate an assessment report."""
-
     # Determine report file path
     assess_file_fp: Path = get_assessed_students_fp(assess_fp)
 

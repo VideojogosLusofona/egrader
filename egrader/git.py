@@ -1,3 +1,5 @@
+"""Functions for handling Git functionality."""
+
 from sh import ErrorReturnCode
 from sh import git as sh_git
 
@@ -12,7 +14,7 @@ def git(*args):
         return sh_git("--no-pager", *args)
     except ErrorReturnCode as erc:
         raise GitError(
-            f"The following error occurred when executing the '{erc.full_cmd}' command:"
+            f"The following error occurred when executing the {erc.full_cmd!r} command:"
             f"\n\n{erc.stderr.decode('UTF-8')}"
         ) from erc
 
