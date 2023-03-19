@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "egrader"
-description = "An auto-grader for simple programming exercises"
+description = "Auto-grader for Git-based programming exercises"
 version = "0.0.1"
 authors = [ { name = "Nuno Fachada", email = "nuno.fachada@ulusofona.pt" } ]
 readme = "README.md"
