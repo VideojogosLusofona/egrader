@@ -28,7 +28,7 @@ def assess_commit_date_interval(
     except GitError:
         return 0
 
-    lc_dt_str = lc_dt_cmd.stdout.decode().strip()
+    lc_dt_str = lc_dt_cmd.strip()
     lc_dt: datetime = isoparse(lc_dt_str)
 
     start_dt = interpret_datetime(start_date, lc_dt.tzinfo)
