@@ -155,15 +155,15 @@ def load_urls(urls_fp: Path) -> List[StudentGit]:
             if len(line) == 0 or line[0] == "#":
                 continue
 
-            # Split line and check that it's composed of two chunks
+            # Split line and check that it's composed of three chunks
             std_url = line.split()
-            if len(std_url) != 2:
+            if len(std_url) != 3:
                 raise SyntaxError(
                     f"Syntax error in line {lno} of {urls_fp}: " f"{line!r}"
                 )
 
             # Create a student instance with it's ID and URL, taken from the line
-            student_git = StudentGit(std_url[0], std_url[1])
+            student_git = StudentGit(std_url[0], std_url[1], std_url[2])
 
             # Append new student to the student list
             students_git.append(student_git)

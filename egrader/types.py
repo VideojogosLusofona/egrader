@@ -9,10 +9,11 @@ import validators
 class StudentGit:
     """A student and his Git repositories."""
 
-    def __init__(self, sid: str, url: str) -> None:
+    def __init__(self, sid: str, email: str, url: str) -> None:
         """Initialize an instance of this class."""
         # Set instance variables
         self.sid: str = sid
+        self.email: str = email
         self.url: str = url
         self.valid_url: bool = False
         self.repos: Dict[str, str] = {}
@@ -23,9 +24,10 @@ class StudentGit:
 
     def __repr__(self) -> str:
         """String representation of this instance for YAML serialization."""
-        return "%s(sid=%r, url=%r, valid_url=%r, repos=%r)" % (
+        return "%s(sid=%r, email=%r, url=%r, valid_url=%r, repos=%r)" % (
             self.__class__.__name__,
             self.sid,
+            self.email,
             self.url,
             self.valid_url,
             self.repos,
