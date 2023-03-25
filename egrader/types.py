@@ -17,7 +17,7 @@ class StudentGit:
         # Set instance variables
         self.sid: str = sid
         self.email: str = email
-        self._url: str | None = None
+        self._url: str = ""
         self.url_type: str | None = None
         self.repos: Dict[str, str] = {}
 
@@ -43,7 +43,7 @@ class StudentGit:
             self.__class__.__name__,
             self.sid,
             self.email,
-            self.url,
+            self._url,
             self.url_type,
             self.repos,
         )
@@ -69,7 +69,7 @@ class StudentGit:
     @property
     def valid_url(self) -> bool:
         """Does this student have a valid URL?"""
-        return self._url is not None and self.url_type is not None
+        return self._url != "" and self.url_type is not None
 
 
 class Assessment:
