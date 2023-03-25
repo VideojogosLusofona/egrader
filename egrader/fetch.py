@@ -5,8 +5,6 @@ from argparse import Namespace
 from pathlib import Path
 from typing import List, Sequence
 
-from yarl import URL
-
 from .cli_lib import OPT_E_LONG, OPT_E_OVWR, OPT_E_SHORT, OPT_E_STOP, check_empty_args
 from .git import GitError, git, git_at
 from .paths import (
@@ -110,7 +108,7 @@ def fetch_repos(
             # Loop through mandated repos
             for repo_name in repos:
                 # Determine repo URL and local path
-                repo_url: URL = URL(student_git.url) / repo_name
+                repo_url: str = student_git.repo_url(repo_name)
                 repo_fp: Path = get_student_repo_fp(
                     assess_fp, student_git.sid, repo_name
                 )

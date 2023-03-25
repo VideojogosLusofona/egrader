@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 
 import requests
 import validators
+from yarl import URL
 
 
 class StudentGit:
@@ -16,24 +17,25 @@ class StudentGit:
         # Set instance variables
         self.sid: str = sid
         self.email: str = email
-        self.url: str = url
+        self._url: str | None = None
         self.url_type: str | None = None
         self.repos: Dict[str, str] = {}
 
         # Validate partial Git URL (only local file and http/https supported)
-        u = urlparse(self.url)
+        u = urlparse(url)
         if u.scheme in {"file", ""}:
             # It's a file URL probably, let's check if it exists and is a folder
             p = Path(u.netloc, u.path)
             if p.exists() and p.is_dir():
                 self.url_type = "file"
-                self.url = str(p)
+                self._url = str(p)
         elif (
             u.scheme in {"http", "https"}  # Is it a HTTP/HTTPS URL?
-            and validators.url(self.url)  # Is it a well-formed URL?
-            and requests.head(self.url).status_code < 400  # Valid net resource (200)?
+            and validators.url(url)  # Is it a well-formed URL?
+            and requests.head(url).status_code < 400  # Valid net resource (200)?
         ):
             self.url_type = u.scheme
+            self._url = url
 
     def __repr__(self) -> str:
         """String representation of this instance for YAML serialization."""
@@ -50,6 +52,15 @@ class StudentGit:
         """Add a new repository to this student instance."""
         self.repos[repo_name] = repo_path
 
+    def repo_url(self, repo_name: str) -> str:
+        """Get full repository URL given the repository name."""
+        if self.valid_url:
+            if self.url_type == "file":
+                return str(Path(self._url, repo_name))
+            elif self.url_type in {"http", "https"}:
+                return str(URL(self._url) / repo_name)
+        raise ValueError(f"Student {self.sid} contains invalid URL.")
+
     @property
     def repo_count(self) -> int:
         """Number of repositories in this student instance."""
@@ -58,7 +69,7 @@ class StudentGit:
     @property
     def valid_url(self) -> bool:
         """Does this student have a valid URL?"""
-        return self.url_type is not None
+        return self._url is not None and self.url_type is not None
 
 
 class Assessment:
