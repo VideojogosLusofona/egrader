@@ -27,8 +27,10 @@ classifiers = [
 dependencies = [
     "python-dateutil",
     "pyyaml",
+    "requests",
     "sh >= 2.0.0",
-    "yarl" ]
+    "yarl",
+    "validators" ]
 
 [project.scripts]
 egrader = "egrader.cli_bin:main"
@@ -69,7 +71,8 @@ dev = [
     "pytest-cov >= 3.0.0",
     "pytest-mypy",
     "types-python-dateutil",
-    "types-PyYAML" ]
+    "types-PyYAML",
+    "types-requests" ]
 
 [project.urls]
 "Bug Reports" = "https://github.com/VideojogosLusofona/egrader/issues"
@@ -84,6 +87,7 @@ python_version = "3.10"
 
 [[tool.mypy.overrides]]
 module = [
+    "validators",
     "sh"
 ]
 ignore_missing_imports = true

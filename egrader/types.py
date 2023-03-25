@@ -2,7 +2,8 @@
 
 from typing import Any, Dict, List
 
-from .git import GitError, git
+import requests
+import validators
 
 
 class StudentGit:
@@ -17,13 +18,9 @@ class StudentGit:
         self.valid_url: bool = False
         self.repos: Dict[str, str] = {}
 
-        # Validate Git repository
-        # This is a bug, we need to check final repos, not this URL
-        try:
-            git("ls-remote", "--exit-code", self.url)
+        # Validate URL if it's is well-formed and if it exists (200)
+        if validators.url(self.url) and requests.head(self.url).status_code < 400:
             self.valid_url = True
-        except GitError:
-            pass
 
     def __repr__(self) -> str:
         """String representation of this instance for YAML serialization."""
