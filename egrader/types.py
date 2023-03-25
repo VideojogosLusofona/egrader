@@ -1,6 +1,8 @@
 """Classes used in egrader."""
 
+from pathlib import Path
 from typing import Any, Dict, List
+from urllib.parse import urlparse
 
 import requests
 import validators
@@ -15,21 +17,32 @@ class StudentGit:
         self.sid: str = sid
         self.email: str = email
         self.url: str = url
-        self.valid_url: bool = False
+        self.url_type: str | None = None
         self.repos: Dict[str, str] = {}
 
-        # Validate URL if it's is well-formed and if it exists (200)
-        if validators.url(self.url) and requests.head(self.url).status_code < 400:
-            self.valid_url = True
+        # Validate partial Git URL (only local file and http/https supported)
+        u = urlparse(self.url)
+        if u.scheme in {"file", ""}:
+            # It's a file URL probably, let's check if it exists and is a folder
+            p = Path(u.netloc, u.path)
+            if p.exists() and p.is_dir():
+                self.url_type = "file"
+                self.url = str(p)
+        elif (
+            u.scheme in {"http", "https"}  # Is it a HTTP/HTTPS URL?
+            and validators.url(self.url)  # Is it a well-formed URL?
+            and requests.head(self.url).status_code < 400  # Valid net resource (200)?
+        ):
+            self.url_type = u.scheme
 
     def __repr__(self) -> str:
         """String representation of this instance for YAML serialization."""
-        return "%s(sid=%r, email=%r, url=%r, valid_url=%r, repos=%r)" % (
+        return "%s(sid=%r, email=%r, url=%r, url_type=%r, repos=%r)" % (
             self.__class__.__name__,
             self.sid,
             self.email,
             self.url,
-            self.valid_url,
+            self.url_type,
             self.repos,
         )
 
@@ -41,6 +54,11 @@ class StudentGit:
     def repo_count(self) -> int:
         """Number of repositories in this student instance."""
         return len(self.repos)
+
+    @property
+    def valid_url(self) -> bool:
+        """Does this student have a valid URL?"""
+        return self.url_type is not None
 
 
 class Assessment:
