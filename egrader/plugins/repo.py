@@ -87,7 +87,7 @@ def assess_run_command(
     input_stream: str | None = None,
     expect_exit_code: int = 0,
     expect_output: str | None = None,
-    timeout: float = 0.5,
+    timeout: float = 2.5,
 ) -> float:
     """Run a command and check for exit code and/or expected output."""
     try:
@@ -101,8 +101,6 @@ def assess_run_command(
         )
     except (TimeoutExpired, FileNotFoundError):
         return 0
-
-    print(r)
 
     if expect_exit_code != r.returncode:
         return 0

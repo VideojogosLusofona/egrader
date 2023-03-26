@@ -36,7 +36,7 @@
     weight: 0.2
     params:
       command: python -c "x=input();print(x)"
-      input: this is the expected string
+      input_stream: this is the expected string
       expect_output: this is the expected string
 - repo: LP1Semana01
   weight: 10
