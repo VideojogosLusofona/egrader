@@ -7,10 +7,11 @@ from typing import Sequence
 from dateutil.parser import isoparse
 
 from ..git import GitError, git_at
+from ..types import StudentGit
 from .helpers import interpret_datetime
 
 
-def assess_min_commits(repo_path: str, minimum: int) -> float:
+def assess_min_commits(student: StudentGit, repo_path: str, minimum: int) -> float:
     """Check if repository has a minimum number of commits."""
     n_commits = git_at(repo_path, "rev-list", "--all", "--count")
     if int(n_commits) >= minimum:
@@ -20,7 +21,10 @@ def assess_min_commits(repo_path: str, minimum: int) -> float:
 
 
 def assess_commit_date_interval(
-    repo_path: str, start_date: date | datetime | str, end_date: date | datetime | str
+    student: StudentGit,
+    repo_path: str,
+    start_date: date | datetime | str,
+    end_date: date | datetime | str,
 ) -> float:
     """Check if the last commit was performed on the specified date interval."""
     try:
@@ -40,12 +44,28 @@ def assess_commit_date_interval(
         return 0
 
 
-def assess_repo_exists(repo_path: str) -> float:
+def assess_commits_email(student: StudentGit, repo_path: str) -> float:
+    """Check commits were performed with the specified emails."""
+    try:
+        commits_emails_cmd: str = git_at(repo_path, "log", r"--format=%ae")
+    except GitError:
+        return 0
+
+    # Convert returned command to list of emails
+    commit_emails_lst = [email.strip() for email in commits_emails_cmd.splitlines()]
+
+    # Grade is percentage of commits done with the student email
+    return commit_emails_lst.count(student.email) / len(commit_emails_lst)
+
+
+def assess_repo_exists(student: StudentGit, repo_path: str) -> float:
     """Check if a repository exists (always returns 1)."""
     return 1
 
 
-def assess_files_exist(repo_path: str, filenames: Sequence[str]) -> float:
+def assess_files_exist(
+    student: StudentGit, repo_path: str, filenames: Sequence[str]
+) -> float:
     """Check if the files or folders exist."""
     n_files_exist = 0
 

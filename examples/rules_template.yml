@@ -43,6 +43,8 @@
     params:
       start_date: 2005-06-16
       end_date: 2006-06-18
+  - name: commits_email
+    weight: 0.1
   inter_assessments:
   - name: more_commits_bonus
     weight: 0.2

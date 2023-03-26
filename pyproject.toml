@@ -38,6 +38,7 @@ egrader = "egrader.cli_bin:main"
 [project.entry-points."egrader.assess_repo"]
 min_commits = "egrader.plugins.repo:assess_min_commits"
 commit_date_interval = "egrader.plugins.repo:assess_commit_date_interval"
+commits_email = "egrader.plugins.repo:assess_commits_email"
 repo_exists = "egrader.plugins.repo:assess_repo_exists"
 files_exist = "egrader.plugins.repo:assess_files_exist"
 

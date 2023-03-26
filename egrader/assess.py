@@ -96,7 +96,7 @@ def assess(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
                         # Perform assessment and obtain the assessment's grade
                         # between 0 and 1
                         assess_grade = assess_fun(
-                            assessed_repo.local_path, **assess_params
+                            student_git, assessed_repo.local_path, **assess_params
                         )
 
                         # Create assessment object
