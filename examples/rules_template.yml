@@ -19,6 +19,25 @@
     params:
       start_date: 2022-06-16
       end_date: 2022-06-18
+  - name: run_command
+    weight: 0.2
+    params:
+      command: this-command-will-not exist
+  - name: run_command
+    weight: 0.2
+    params:
+      command: python -c "input('This will timeout')"
+  - name: run_command
+    weight: 0.2
+    params:
+      command: python -c "exit(3)"
+      expect_exit_code: 3
+  - name: run_command
+    weight: 0.2
+    params:
+      command: python -c "x=input();print(x)"
+      input: this is the expected string
+      expect_output: this is the expected string
 - repo: LP1Semana01
   weight: 10
   assessments:

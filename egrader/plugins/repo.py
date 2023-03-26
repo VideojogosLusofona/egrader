@@ -1,7 +1,9 @@
 """Repository plug-ins."""
 
+import shlex
 from datetime import date, datetime
 from pathlib import Path
+from subprocess import TimeoutExpired, run
 from typing import Sequence
 
 from dateutil.parser import isoparse
@@ -76,3 +78,36 @@ def assess_files_exist(
             n_files_exist += 1
 
     return n_files_exist / len(filenames)
+
+
+def assess_run_command(
+    student: StudentGit,
+    repo_path: str,
+    command: str,
+    input_stream: str | None = None,
+    expect_exit_code: int = 0,
+    expect_output: str | None = None,
+    timeout: float = 0.5,
+) -> float:
+    """Run a command and check for exit code and/or expected output."""
+    try:
+        r = run(
+            shlex.split(command),
+            input=input_stream,
+            capture_output=True,
+            text=True,
+            cwd=repo_path,
+            timeout=timeout,
+        )
+    except (TimeoutExpired, FileNotFoundError):
+        return 0
+
+    print(r)
+
+    if expect_exit_code != r.returncode:
+        return 0
+
+    if expect_output is not None and expect_output not in r.stdout + r.stderr:
+        return 0
+
+    return 1

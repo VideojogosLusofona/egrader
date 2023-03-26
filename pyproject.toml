@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "egrader"
 description = "Auto-grader for Git-based programming exercises"
-version = "0.0.2"
+version = "0.0.3"
 authors = [ { name = "Nuno Fachada", email = "nuno.fachada@ulusofona.pt" } ]
 readme = "README.md"
 requires-python = ">=3.10"
@@ -41,6 +41,7 @@ commit_date_interval = "egrader.plugins.repo:assess_commit_date_interval"
 commits_email = "egrader.plugins.repo:assess_commits_email"
 repo_exists = "egrader.plugins.repo:assess_repo_exists"
 files_exist = "egrader.plugins.repo:assess_files_exist"
+run_command = "egrader.plugins.repo:assess_run_command"
 
 [project.entry-points."egrader.assess_inter_repo"]
 more_commits_bonus = "egrader.plugins.inter_repo:assess_more_commits_bonus"
