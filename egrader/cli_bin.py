@@ -58,6 +58,15 @@ def main():
     )
 
     parser_fetch.add_argument(
+        "-w",
+        "--wait",
+        help="time in seconds to wait between clones/fetches (default: 0)",
+        metavar="SECS",
+        type=float,
+        default=0,
+    )
+
+    parser_fetch.add_argument(
         "urls_file",
         metavar="URLS",
         help="student public Git account URLs file in TSV format",

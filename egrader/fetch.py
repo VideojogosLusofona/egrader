@@ -3,6 +3,7 @@
 import shutil
 from argparse import Namespace
 from pathlib import Path
+from time import sleep
 from typing import List, Sequence
 
 from .cli_lib import OPT_E_LONG, OPT_E_OVWR, OPT_E_SHORT, OPT_E_STOP, check_empty_args
@@ -27,6 +28,9 @@ def fetch(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
     # Determine file paths for Git URLs and rules files
     urls_fp: Path = Path(args.urls_file)
     rules_fp: Path = Path(args.rules_file)
+
+    # Time to wait between fetches
+    wait_time: float = args.wait
 
     # Check if Git URLs file exists, and if not, quit
     check_required_fp_exists(urls_fp)
@@ -74,7 +78,7 @@ def fetch(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
 
     # Clone or update student repositories
     n_valid_urls = fetch_repos(
-        assess_fp, students_git, [rule["repo"] for rule in repo_rules]
+        assess_fp, students_git, [rule["repo"] for rule in repo_rules], wait_time
     )
 
     # Determine number of repositories
@@ -94,11 +98,17 @@ def fetch(assess_fp: Path, args: Namespace, extra_args: Sequence[str]) -> None:
 
 
 def fetch_repos(
-    assess_fp: Path, students_git: Sequence[StudentGit], repos: Sequence[str]
+    assess_fp: Path,
+    students_git: Sequence[StudentGit],
+    repos: Sequence[str],
+    wait_time: float,
 ) -> int:
     """Clone or update student repositories."""
     # Number of valid Git URLs
     n_valid_urls = 0
+
+    # Already fetched/cloned anything?
+    any_fetch = False
 
     # Loop through students
     for student_git in students_git:
@@ -107,6 +117,11 @@ def fetch_repos(
 
             # Loop through mandated repos
             for repo_name in repos:
+                # If a fetch/clone was already done, then wait the number of seconds
+                # specified by the user
+                if any_fetch:
+                    sleep(wait_time)
+
                 # Determine repo URL and local path
                 repo_url: str = student_git.repo_url(repo_name)
                 repo_fp: Path = get_student_repo_fp(
@@ -133,6 +148,9 @@ def fetch_repos(
                     else:
                         # Otherwise add repo location to student object
                         student_git.add_repo(repo_name, str(repo_fp))
+
+                # Indicate that at least one fetch/clone has been made
+                any_fetch = True
 
     return n_valid_urls
 
