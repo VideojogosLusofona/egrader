@@ -68,7 +68,7 @@ dev = [
     "mypy",
     "pep8-naming",
     "pre-commit",
-    "pytest >= 7.0",
+    "pytest >= 8.0",
     "coverage",
     "pytest-cov >= 3.0.0",
     "pytest-mypy",
@@ -95,7 +95,7 @@ module = [
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-minversion = "7.0"
+minversion = "8.0"
 addopts = "--mypy --doctest-modules"
 norecursedirs = [
     "hooks",
