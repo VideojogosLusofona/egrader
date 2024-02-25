@@ -1,4 +1,5 @@
 [![Tests](https://github.com/VideojogosLusofona/egrader/actions/workflows/tests.yml/badge.svg)](https://github.com/VideojogosLusofona/egrader/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/VideojogosLusofona/egrader/graph/badge.svg?token=US7KSSBSX4)](https://codecov.io/gh/VideojogosLusofona/egrader)
 [![PyPI](https://img.shields.io/pypi/v/egrader)](https://pypi.org/project/egrader/)
 [![MIT](https://img.shields.io/badge/license-GPLv3-yellowgreen.svg)](https://www.tldrlegal.com/license/gnu-general-public-license-v3-gpl-3)
 
