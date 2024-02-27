@@ -25,6 +25,7 @@ classifiers = [
     "Operating System :: POSIX",
     "Topic :: Education" ]
 dependencies = [
+    "numpy",
     "python-dateutil",
     "pyyaml",
     "requests",
@@ -86,6 +87,7 @@ packages = [ "egrader" ]
 
 [tool.mypy]
 python_version = "3.10"
+check_untyped_defs = true
 
 [[tool.mypy.overrides]]
 module = [
