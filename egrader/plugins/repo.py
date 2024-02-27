@@ -6,11 +6,14 @@ from pathlib import Path
 from subprocess import TimeoutExpired, run
 from typing import Sequence
 
+import numpy as np
 from dateutil.parser import isoparse
 
 from ..git import GitError, git_at
 from ..types import StudentGit
 from .helpers import interpret_datetime
+
+_max_git_commits: int = np.iinfo(np.int32).max
 
 
 def assess_min_commits(student: StudentGit, repo_path: str, minimum: int) -> float:
@@ -25,25 +28,31 @@ def assess_min_commits(student: StudentGit, repo_path: str, minimum: int) -> flo
 def assess_commit_date_interval(
     student: StudentGit,
     repo_path: str,
-    start_date: date | datetime | str,
-    end_date: date | datetime | str,
+    before_date: date | datetime | str,
+    after_date: date | datetime | str = date.min,
+    last_n_commits: int = _max_git_commits,
 ) -> float:
-    """Check if the last commit was performed on the specified date interval."""
+    """Return the percentage of commits performed on the specified date interval."""
     try:
-        lc_dt_cmd = git_at(repo_path, "log", "-1", "--date=iso-strict", r"--format=%cd")
+        commit_dates_cmd = git_at(
+            repo_path, "log", f"-{last_n_commits}", "--date=iso-strict", r"--format=%cd"
+        )
     except GitError:
         return 0
 
-    lc_dt_str = lc_dt_cmd.strip()
-    lc_dt: datetime = isoparse(lc_dt_str)
+    commit_dates = commit_dates_cmd.splitlines()
 
-    start_dt = interpret_datetime(start_date, lc_dt.tzinfo)
-    end_dt = interpret_datetime(end_date, lc_dt.tzinfo)
+    within_interval: int = 0
 
-    if start_dt < lc_dt < end_dt:
-        return 1
-    else:
-        return 0
+    for commit_date in commit_dates:
+        commit_dtiso: datetime = isoparse(commit_date.strip())
+        after_dt = interpret_datetime(after_date, commit_dtiso.tzinfo)
+        before_dt = interpret_datetime(before_date, commit_dtiso.tzinfo)
+
+        if after_dt <= commit_dtiso <= before_dt:
+            within_interval += 1
+
+    return within_interval / len(commit_dates)
 
 
 def assess_commits_email(student: StudentGit, repo_path: str) -> float:
