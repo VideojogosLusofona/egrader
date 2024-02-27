@@ -1,35 +1,60 @@
 """Tests for repository plug-ins."""
 
-from pathlib import Path
+from datetime import datetime, timedelta
 
-from egrader.git import git_at
-from egrader.plugins.repo import assess_min_commits
+import numpy as np
+
+from egrader.plugins.repo import assess_commit_date_interval, assess_min_commits
 from egrader.types import StudentGit
 
 
-def do_tmpfile_commit(tmp_file_path: Path):
-    """Helper functions which makes a simple commit on the specified repository."""
-    with open(tmp_file_path, "a") as tmp_file:
-        tmp_file.write("Some more text")
-    git_at(tmp_file_path.parent, "add", tmp_file_path.name)
-    git_at(tmp_file_path.parent, "commit", "-m", '"Yet another commit"')
-
-
-def test_repo_assess_min_commits_no(git_repo_empty):
+def test_repo_assess_min_commits_no(git_repo, make_commit):
     """Test if a minimum number of commits is not confirmed."""
-    some_file_path = Path(git_repo_empty, "some_file.txt")
-    do_tmpfile_commit(some_file_path)
+    make_commit(git_repo)
     stdgit = StudentGit("", "", "")
-    result = assess_min_commits(stdgit, str(git_repo_empty), 2)
+    result = assess_min_commits(stdgit, str(git_repo), 2)
     assert result == 0
 
 
-def test_repo_assess_min_commits_yes(git_repo_empty):
+def test_repo_assess_min_commits_yes(git_repo, make_commit):
     """Test if a minimum number of commits is confirmed."""
-    some_file_path = Path(git_repo_empty, "some_file.txt")
-    do_tmpfile_commit(some_file_path)
-    do_tmpfile_commit(some_file_path)
-    do_tmpfile_commit(some_file_path)
+    make_commit(git_repo)
+    make_commit(git_repo)
+    make_commit(git_repo)
     stdgit = StudentGit("", "", "")
-    result = assess_min_commits(stdgit, str(git_repo_empty), 2)
+    result = assess_min_commits(stdgit, str(git_repo), 2)
     assert result == 1
+
+
+def test_repo_assess_commit_date_interval(git_repo, make_commit):
+    """Test if the percentage of commits done in a date interval is correct."""
+    # Interval for valid commits
+    before_date: datetime = datetime.now() - timedelta(days=1)
+    after_date: datetime = datetime.now() - timedelta(days=4)
+
+    # Commits done before the after date
+    n_commits_before = 2
+    make_commit(git_repo, after_date - timedelta(hours=1, minutes=30))
+    make_commit(git_repo, after_date - timedelta(seconds=30))
+
+    # Commits done within the valid time interval
+    n_commits_within = 5
+    make_commit(git_repo, after_date + timedelta(seconds=30))
+    make_commit(git_repo, after_date + timedelta(hours=1, minutes=30))
+    make_commit(git_repo, before_date - timedelta(days=1, hours=5))
+    make_commit(git_repo, before_date - timedelta(minutes=45))
+    make_commit(git_repo, before_date - timedelta(seconds=30))
+
+    # Commits done after the before date
+    n_commits_after = 1
+    make_commit(git_repo, before_date + timedelta(seconds=10))
+
+    # Check if plugin returns the expected result
+    n_commits = n_commits_before + n_commits_within + n_commits_after
+    stdgit = StudentGit("", "", "")
+    np.testing.assert_allclose(
+        n_commits_within / n_commits,
+        assess_commit_date_interval(
+            stdgit, str(git_repo), before_date=before_date, after_date=after_date
+        ),
+    )
