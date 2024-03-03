@@ -31,7 +31,7 @@ def assess_commit_date_interval(
     before_date: date | datetime | str,
     after_date: date | datetime | str = date.min,
     last_n_commits: int = _max_git_commits,
-    strict: bool = False
+    strict: bool = False,
 ) -> float:
     """Return the percentage of commits performed on the specified date interval."""
     try:
