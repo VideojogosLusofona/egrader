@@ -35,6 +35,6 @@ def make_commit(monkeypatch):
         with open(some_file_path, "a") as some_file:
             some_file.write("Some more text")
         git_at(repo, "add", some_file_path.name)
-        git_at(repo, "commit", "-m", '"Yet another commit"', f"--date={dt!r}")
+        git_at(repo, "commit", "-m", '"Yet another commit"', f"--date={dt}")
 
     return _make_commit
