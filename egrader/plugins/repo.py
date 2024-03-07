@@ -78,7 +78,7 @@ def assess_repo_exists(student: StudentGit, repo_path: str) -> float:
 
 
 def assess_files_exist(
-    student: StudentGit, repo_path: str, filenames: Sequence[str]
+    student: StudentGit, repo_path: str, filenames: Sequence[str], strict: bool = False
 ) -> float:
     """Check if the files or folders exist."""
     n_files_exist = 0
@@ -88,6 +88,8 @@ def assess_files_exist(
 
         if fp.exists():
             n_files_exist += 1
+        elif strict:
+            return 0
 
     return n_files_exist / len(filenames)
 
