@@ -127,6 +127,7 @@ max-line-length = 88
 max-doc-length = 88
 ignore = [
     "B018",
+    "B907", # manually surrounded by quotes, consider using the `!r` conversion flag.
     # "E203", # whitespace before ':' # https://github.com/PyCQA/pycodestyle/issues/373
     "E203",
     "SIM106",
