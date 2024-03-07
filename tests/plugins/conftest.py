@@ -25,7 +25,7 @@ def git_repo(tmp_path, monkeypatch):
 
 @pytest.fixture()
 def make_commit(monkeypatch):
-    """Fixture to make a simple commit."""
+    """Returns a function to make simple commits."""
     now: datetime = datetime.now()
 
     def _make_commit(
@@ -44,3 +44,22 @@ def make_commit(monkeypatch):
         git_at(repo, "commit", "-m", f'"{commit_msg}"', f"--date={dt}")
 
     return _make_commit
+
+
+@pytest.fixture(
+    params=[
+        (
+            "file.txt",
+            "main.c",
+            ".gitignore",
+            "file with spaces",
+            "Makefile",
+            "two_extensions.md.html",
+            "UPPERCASE ~ ! lower case.MD",
+        ),
+        ("script.py", "another_script.py", "Documentation.html"),
+    ]
+)
+def file_list(request):
+    """Provides a list of file names."""
+    return request.param

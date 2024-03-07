@@ -1,11 +1,16 @@
 """Tests for repository plug-ins."""
 
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import numpy as np
 import pytest
 
-from egrader.plugins.repo import assess_commit_date_interval, assess_min_commits
+from egrader.plugins.repo import (
+    assess_commit_date_interval,
+    assess_files_exist,
+    assess_min_commits,
+)
 from egrader.types import StudentGit
 
 
@@ -128,3 +133,31 @@ def test_repo_assess_commit_date_interval_none(git_repo, make_commit, strict):
     )
 
     assert grade == 0
+
+
+@pytest.mark.parametrize("strict", [False, True])
+@pytest.mark.parametrize("percent", [0, 0.3, 0.7, 1])
+def test_repo_assess_files_exist_ok(tmp_path, file_list, strict, percent):
+    """Test if the percentage of files in a repository is correct."""
+    # Number of files to create
+    num_files_to_create = round(percent * len(file_list))
+
+    # Create files
+    for i in range(num_files_to_create):
+        file_path = Path(tmp_path, file_list[i])
+        with open(file_path, "w"):
+            pass
+
+    # Empty student just for testing
+    stdgit = StudentGit("", "", "")
+
+    # Invoke plugin
+    grade = assess_files_exist(stdgit, tmp_path, file_list, strict)
+
+    if strict and percent < 1:
+        assert grade == 0
+    else:
+        np.testing.assert_allclose(
+            grade,
+            num_files_to_create / len(file_list),
+        )
