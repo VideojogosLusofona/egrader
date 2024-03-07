@@ -28,13 +28,19 @@ def make_commit(monkeypatch):
     """Fixture to make a simple commit."""
     now: datetime = datetime.now()
 
-    def _make_commit(repo: Path, dt: datetime = now):
+    def _make_commit(
+        repo: Path,
+        dt: datetime = now,
+        filepath: str | Path = "some_file.txt",
+        contents: str = "Some more text",
+        commit_msg: str = "Yet another commit",
+    ):
         """Helper function which makes a simple commit on the specified repository."""
         monkeypatch.setenv("GIT_COMMITTER_DATE", str(dt))
-        some_file_path = Path(repo, "some_file.txt")
+        some_file_path = Path(repo, filepath)
         with open(some_file_path, "a") as some_file:
-            some_file.write("Some more text")
+            some_file.write(contents)
         git_at(repo, "add", some_file_path.name)
-        git_at(repo, "commit", "-m", '"Yet another commit"', f"--date={dt}")
+        git_at(repo, "commit", "-m", f'"{commit_msg}"', f"--date={dt}")
 
     return _make_commit

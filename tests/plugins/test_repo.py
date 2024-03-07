@@ -36,20 +36,20 @@ def test_repo_assess_commit_date_interval_some(git_repo, make_commit, strict):
 
     # Commits done before the after date
     n_commits_before = 2
-    make_commit(git_repo, after_date - timedelta(hours=1, minutes=30))
-    make_commit(git_repo, after_date - timedelta(seconds=30))
+    make_commit(git_repo, dt=after_date - timedelta(hours=1, minutes=30))
+    make_commit(git_repo, dt=after_date - timedelta(seconds=30))
 
     # Commits done within the valid time interval
     n_commits_within = 5
-    make_commit(git_repo, after_date + timedelta(seconds=30))
-    make_commit(git_repo, after_date + timedelta(hours=1, minutes=30))
-    make_commit(git_repo, before_date - timedelta(days=1, hours=5))
-    make_commit(git_repo, before_date - timedelta(minutes=45))
-    make_commit(git_repo, before_date - timedelta(seconds=30))
+    make_commit(git_repo, dt=after_date + timedelta(seconds=30))
+    make_commit(git_repo, dt=after_date + timedelta(hours=1, minutes=30))
+    make_commit(git_repo, dt=before_date - timedelta(days=1, hours=5))
+    make_commit(git_repo, dt=before_date - timedelta(minutes=45))
+    make_commit(git_repo, dt=before_date - timedelta(seconds=30))
 
     # Commits done after the before date
     n_commits_after = 1
-    make_commit(git_repo, before_date + timedelta(seconds=10))
+    make_commit(git_repo, dt=before_date + timedelta(seconds=10))
 
     # Check if plugin returns the expected result
     n_commits = n_commits_before + n_commits_within + n_commits_after
@@ -80,12 +80,12 @@ def test_repo_assess_commit_date_interval_all(git_repo, make_commit, strict):
     after_date: datetime = datetime.now() - timedelta(days=4)
 
     # Commits done within the valid time interval
-    make_commit(git_repo, after_date + timedelta(seconds=30))
-    make_commit(git_repo, after_date + timedelta(hours=1, minutes=30))
-    make_commit(git_repo, after_date + timedelta(hours=1, minutes=45))
-    make_commit(git_repo, before_date - timedelta(days=1, hours=5))
-    make_commit(git_repo, before_date - timedelta(minutes=45))
-    make_commit(git_repo, before_date - timedelta(seconds=30))
+    make_commit(git_repo, dt=after_date + timedelta(seconds=30))
+    make_commit(git_repo, dt=after_date + timedelta(hours=1, minutes=30))
+    make_commit(git_repo, dt=after_date + timedelta(hours=1, minutes=45))
+    make_commit(git_repo, dt=before_date - timedelta(days=1, hours=5))
+    make_commit(git_repo, dt=before_date - timedelta(minutes=45))
+    make_commit(git_repo, dt=before_date - timedelta(seconds=30))
 
     # Check if plugin returns the expected result
     stdgit = StudentGit("", "", "")
@@ -109,12 +109,12 @@ def test_repo_assess_commit_date_interval_none(git_repo, make_commit, strict):
     after_date: datetime = datetime.now() - timedelta(days=4)
 
     # Commits done outside the valid time interval
-    make_commit(git_repo, after_date - timedelta(hours=1, minutes=45))
-    make_commit(git_repo, after_date - timedelta(hours=1, minutes=30))
-    make_commit(git_repo, after_date - timedelta(seconds=30))
-    make_commit(git_repo, before_date + timedelta(seconds=30))
-    make_commit(git_repo, before_date + timedelta(minutes=45))
-    make_commit(git_repo, before_date + timedelta(days=1, hours=5))
+    make_commit(git_repo, dt=after_date - timedelta(hours=1, minutes=45))
+    make_commit(git_repo, dt=after_date - timedelta(hours=1, minutes=30))
+    make_commit(git_repo, dt=after_date - timedelta(seconds=30))
+    make_commit(git_repo, dt=before_date + timedelta(seconds=30))
+    make_commit(git_repo, dt=before_date + timedelta(minutes=45))
+    make_commit(git_repo, dt=before_date + timedelta(days=1, hours=5))
 
     # Check if plugin returns the expected result
     stdgit = StudentGit("", "", "")
