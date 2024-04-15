@@ -101,7 +101,7 @@ def assess_run_command(
     input_stream: str | None = None,
     expect_exit_code: int = 0,
     expect_output: str | None = None,
-    timeout: float = 2.5,
+    timeout: float = 6.5,
 ) -> float:
     """Run a command and check for exit code and/or expected output."""
     try:
