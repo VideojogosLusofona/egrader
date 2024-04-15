@@ -1,6 +1,7 @@
 """Repository plug-ins."""
 
 import shlex
+import sys
 from datetime import date, datetime
 from pathlib import Path
 from subprocess import TimeoutExpired, run
@@ -114,6 +115,14 @@ def assess_run_command(
             timeout=timeout,
         )
     except (TimeoutExpired, FileNotFoundError):
+        return 0
+
+    except Exception as ex:
+        print(
+            f"Unexpected error '{ex}' running command '{command}' in "
+            + f"folder '{repo_path}'",
+            file=sys.stderr,
+        )
         return 0
 
     if expect_exit_code != r.returncode:
