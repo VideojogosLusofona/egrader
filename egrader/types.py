@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any, Dict, List
 from urllib.parse import urlparse
 
-import requests
+# import requests
 import validators
 from yarl import URL
 
@@ -32,7 +32,7 @@ class StudentGit:
         elif (
             u.scheme in {"http", "https"}  # Is it a HTTP/HTTPS URL?
             and validators.url(url)  # Is it a well-formed URL?
-            and requests.head(url).status_code < 400  # Valid net resource (200)?
+            # and requests.head(url).status_code < 400  # Valid net resource (200)?
         ):
             self.url_type = u.scheme
             self._url = url
