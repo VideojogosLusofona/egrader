@@ -42,14 +42,14 @@ def _load_plugin_function(plugin_group: str, plugin_name: str) -> Any:
     # Obtain the specified plugin entry point
     plugins: EntryPoints = entry_points(group=plugin_group, name=plugin_name)
 
-    # If plugin no found, raise error
-    if len(plugins) == 0:
+    # If plugin not found, raise error
+    if plugin_name not in plugins.names:
         raise PluginLoadError(
-            f"Plugin {plugin_name!r} not found in {plugin_group!r} group"
+            f"Plugin {plugin_name!r} not found in {plugin_group!r} group"  # noqa: E713
         )
 
     # Otherwise, return plugin function
-    return plugins[0].load()
+    return plugins[plugin_name].load()
 
 
 class PluginLoadError(Exception):
