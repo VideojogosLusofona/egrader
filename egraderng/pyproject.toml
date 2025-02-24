@@ -1,0 +1,119 @@
+[build-system]
+requires = [ "setuptools" ]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "egrader"
+description = "Auto-grader for Git-based programming exercises"
+version = "0.1.0"
+authors = [ { name = "Nuno Fachada", email = "nuno.fachada@ulusofona.pt" } ]
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = [
+    "aat",
+    "education",
+    "autograder",
+    "programming",
+    "computer science education" ]
+license = {text = "GPL-3"}
+# https://pypi.org/classifiers/
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: POSIX",
+    "Topic :: Education" ]
+dependencies = [
+    "typer >= 0.15.0",
+    "rich >= 13.9.0" ]
+
+[project.scripts]
+egrader = "egrader.main:app"
+
+
+[project.optional-dependencies]
+dev = [
+    "black >= 25.1.0",
+    "flake8 >= 7.0.0",
+    "flake8-black >= 0.3.6",
+    "flake8-builtins >= 2.5.0",
+    "flake8-bugbear >= 24.12.12",
+    "flake8-comprehensions >= 3.16.0",
+    "flake8-docstrings >= 1.7.0",
+    "flake8-isort >= 6.1.2",
+    "Flake8-pyproject >= 1.2.3",
+    "flake8-pytest-style >= 2.1.0",
+    "flake8-simplify >= 0.21.0",
+    "isort >= 6.0.0",
+    "mypy >= 1.15.0",
+    "pep8-naming >= 0.14.1",
+    "pre-commit >= 4.1.0",
+    "pytest >= 8.0",
+    "coverage >= 7.6.12",
+    "pytest-cov >= 6.0.0",
+    "pytest-mypy >= 0.10.3" ]
+
+[project.urls]
+"Bug Reports" = "https://github.com/VideojogosLusofona/egrader/issues"
+"Documentation" = "https://videojogoslusofona.github.io/egrader/"
+"Source" = "https://github.com/VideojogosLusofona/egrader"
+
+[tool.setuptools]
+packages = [ "egrader" ]
+
+[tool.mypy]
+python_version = "3.10"
+check_untyped_defs = true
+
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "--mypy --doctest-modules"
+norecursedirs = [
+    "hooks",
+    "*.egg",
+    ".eggs",
+    "dist",
+    "build",
+    "docs",
+    ".tox",
+    ".git",
+    "__pycache__" ]
+testpaths = ["egrader", "tests"]
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+# https://pycqa.github.io/isort/docs/configuration/options.html
+profile = "black"
+src_paths = [ "egrader", "tests" ]
+line_length = 88
+skip_gitignore = "True"
+
+[tool.flake8]
+extend-select = [ "B9", "C4" ]
+max-line-length = 88
+max-doc-length = 88
+ignore = [
+    "B018",
+    "B907", # manually surrounded by quotes, consider using the `!r` conversion flag.
+    # "E203", # whitespace before ':' # https://github.com/PyCQA/pycodestyle/issues/373
+    "E203",
+    "SIM106",
+    "W503" ]
+doctests = true
+exclude = [
+    ".git",
+    "__pycache__",
+    ".*cache",
+    "build",
+    "dist",
+    "env",
+    "venv",
+    ".eggs",
+    "*.egg",
+    "docs" ]
+# flake8-docstrings
+docstring-convention = "google"
