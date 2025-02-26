@@ -22,18 +22,30 @@ def fetch(
     urls: Annotated[
         Path,
         typer.Argument(
-            help="TSV file with remote Git account URLs.", show_default=False
+            help="TSV file with remote Git account URLs.",
+            show_default=False,
+            exists=True,
+            file_okay=True,
+            readable=True,
         ),
     ],
     rules: Annotated[
         Path,
-        typer.Argument(help="YAML file with assessment rules.", show_default=False),
+        typer.Argument(
+            help="YAML file with assessment rules.",
+            show_default=False,
+            exists=True,
+            file_okay=True,
+            readable=True,
+        ),
     ],
     assess_folder: Annotated[
         Path | None,
         typer.Argument(
             help="Folder where to place assessment results.",
             show_default="`rules` minus the .yaml extension.",
+            dir_okay=True,
+            writable=True,
         ),
     ] = None,
     mode: Annotated[

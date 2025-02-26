@@ -15,6 +15,9 @@ def report(
         typer.Argument(
             help="Folder containing assessment results.",
             show_default=False,
+            exists=True,
+            dir_okay=True,
+            readable=True,
         ),
     ],
 ):
