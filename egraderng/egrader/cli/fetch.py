@@ -1,10 +1,13 @@
 """Handle the fetch command."""
 
+import shutil
 from enum import Enum
 from pathlib import Path
 
 import typer
 from typing_extensions import Annotated
+
+from ..core.fetch import fetch_op
 
 app = typer.Typer()
 
@@ -63,4 +66,28 @@ def fetch(
     ] = 0.0,
 ):
     """Fetch projects from repositories."""
-    print(f"{urls}\n{rules}\n{assess_folder}")
+    if assess_folder is None:
+        assess_folder = Path(rules.stem)
+
+    if assess_folder.exists():
+
+        if assess_folder.is_file():
+            raise typer.BadParameter(
+                f"Assessment folder `{assess_folder}` is a file. "
+                + "Only folders are allowed."
+            )
+
+        if mode == FetchMode.stop:
+
+            raise typer.BadParameter(
+                f"Assessment folder `{assess_folder}` already exists. "
+                + "Delete it or use an alternative --mode option."
+            )
+
+        if mode == FetchMode.overwrite:
+            shutil.rmtree(assess_folder)
+
+    else:
+        assess_folder.mkdir()
+
+    fetch_op(rules, assess_folder)
