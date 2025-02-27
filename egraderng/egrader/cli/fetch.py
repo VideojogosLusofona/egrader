@@ -26,10 +26,10 @@ class FetchMode(str, Enum):
 
 @app.command()
 def fetch(
-    urls: Annotated[
+    repos: Annotated[
         Path,
         typer.Argument(
-            help="TSV file with remote Git account URLs.",
+            help="CSV/TSV file with user IDs and respective repository links.",
             show_default=False,
             exists=True,
             file_okay=True,
