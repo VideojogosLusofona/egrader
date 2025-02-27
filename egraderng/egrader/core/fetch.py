@@ -4,6 +4,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from .constants import EGraderConst as Egc
+
 
 def _load_repos(repos_fp: Path) -> pd.DataFrame:
     """Load users and repositories from the specified CSV file.
@@ -18,11 +20,15 @@ def _load_repos(repos_fp: Path) -> pd.DataFrame:
     """
     df = pd.read_csv(repos_fp)
 
-    if "id" not in df.columns:
-        raise ValueError("Repositories file does not contain required `id` column.")
+    if Egc.ID_COL not in df.columns:
+        raise ValueError(
+            f"Repositories file does not contain required `{Egc.ID_COL}` column."
+        )
 
-    if "repo" not in df.columns:
-        raise ValueError("Repositories file does not contain required `repo` column.")
+    if Egc.REPO_COL not in df.columns:
+        raise ValueError(
+            f"Repositories file does not contain required `{Egc.REPO_COL}` column."
+        )
 
     return df
 
