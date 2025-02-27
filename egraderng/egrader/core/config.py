@@ -6,7 +6,10 @@
 
 from types import SimpleNamespace
 
+from rich.console import Console
+
 # Create a global config object
 eg_config = SimpleNamespace()
+eg_config.console = Console(highlight=False)
 eg_config.id_col = "id"
 eg_config.repo_col = "repo"

@@ -9,6 +9,7 @@ import importlib.metadata
 import typer
 
 from .cli import app
+from .core import eg_config as egc
 
 __version__ = importlib.metadata.version("egrader")
 
@@ -16,7 +17,7 @@ __version__ = importlib.metadata.version("egrader")
 def version_callback(value: bool):
     """Show version."""
     if value:
-        print(f"egrader v{__version__}")
+        egc.console.print(f"[grey42]egrader[/] [i]v{__version__}[/i]")
         raise typer.Exit()
 
 
