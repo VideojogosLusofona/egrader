@@ -4,6 +4,6 @@
 
 """Auto-grader for Git-based programming exercises."""
 
-from .core import fetch_op
+from .core import eg_config, fetch_op
 
-__all__ = ["fetch_op"]
+__all__ = ["eg_config", "fetch_op"]
