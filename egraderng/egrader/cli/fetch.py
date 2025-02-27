@@ -94,4 +94,4 @@ def fetch(
     else:
         assess_folder.mkdir()
 
-    fetch_op(rules, assess_folder)
+    fetch_op(repos, rules, assess_folder)
