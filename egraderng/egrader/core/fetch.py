@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from .constants import EGraderConst as Egc
+from .config import eg_config as egc
 
 
 def _load_repos(repos_fp: Path) -> pd.DataFrame:
@@ -20,14 +20,14 @@ def _load_repos(repos_fp: Path) -> pd.DataFrame:
     """
     df = pd.read_csv(repos_fp)
 
-    if Egc.ID_COL not in df.columns:
+    if egc.id_col not in df.columns:
         raise ValueError(
-            f"Repositories file does not contain required `{Egc.ID_COL}` column."
+            f"Repositories file does not contain required `{egc.id_col}` column."
         )
 
-    if Egc.REPO_COL not in df.columns:
+    if egc.repo_col not in df.columns:
         raise ValueError(
-            f"Repositories file does not contain required `{Egc.REPO_COL}` column."
+            f"Repositories file does not contain required `{egc.repo_col}` column."
         )
 
     return df
