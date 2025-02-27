@@ -3,3 +3,7 @@
 # See <https://www.gnu.org/licenses/gpl-3.0.html> for details.
 
 """Auto-grader for Git-based programming exercises."""
+
+from .core import fetch_op
+
+__all__ = ["fetch_op"]
