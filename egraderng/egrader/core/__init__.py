@@ -3,3 +3,7 @@
 # See <https://www.gnu.org/licenses/gpl-3.0.html> for details.
 
 """Core functionality."""
+
+from .fetch import fetch_op
+
+__all__ = ["fetch_op"]
