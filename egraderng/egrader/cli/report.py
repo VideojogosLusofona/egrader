@@ -1,9 +1,12 @@
 """Handle the report command."""
 
+import logging
 from pathlib import Path
 
 import typer
 from typing_extensions import Annotated
+
+logger = logging.getLogger(__name__)
 
 app = typer.Typer()
 
@@ -22,4 +25,4 @@ def report(
     ],
 ):
     """Generate an assessment report."""
-    print(f"Hello {assess_folder}")
+    logger.debug(f"Hello {assess_folder}")

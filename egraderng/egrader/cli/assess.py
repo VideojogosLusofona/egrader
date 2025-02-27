@@ -1,11 +1,13 @@
 """Handle the assess command."""
 
+import logging
 from pathlib import Path
 
 import typer
 from typing_extensions import Annotated
 
 app = typer.Typer()
+logger = logging.getLogger(__name__)
 
 
 @app.command()
@@ -32,4 +34,4 @@ def assess(
     ] = None,
 ):
     """Assess fetched projects."""
-    print(f"{rules}\n{assess_folder}")
+    logger.debug(f"{rules}\n{assess_folder}")

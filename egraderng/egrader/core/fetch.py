@@ -1,10 +1,13 @@
 """Fetch functionality."""
 
+import logging
 from pathlib import Path
 
 import pandas as pd
 
 from .config import eg_config as egc
+
+logger = logging.getLogger(__name__)
 
 
 def _load_repos(repos_fp: Path) -> pd.DataFrame:
@@ -43,4 +46,4 @@ def fetch_op(repos_fp: Path, rules_fp: Path, assess_fp: Path) -> None:
     """
     repos_df = _load_repos(repos_fp)
 
-    print(repos_df)
+    logger.debug(repos_df)
