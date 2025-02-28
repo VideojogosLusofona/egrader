@@ -5,6 +5,6 @@
 """Core functionality."""
 
 from .config import eg_config
-from .fetch import fetch_op
+from .fetch import fetch_op, load_repo_names, load_user_data
 
-__all__ = ["eg_config", "fetch_op"]
+__all__ = ["eg_config", "fetch_op", "load_repo_names", "load_user_data"]

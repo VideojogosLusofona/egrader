@@ -11,7 +11,7 @@ from pathlib import Path
 import typer
 from typing_extensions import Annotated
 
-from ..core.fetch import fetch_op
+from ..core.fetch import fetch_op, load_repo_names, load_user_data
 
 app = typer.Typer()
 
@@ -94,4 +94,6 @@ def fetch(
     else:
         assess_folder.mkdir()
 
-    fetch_op(repos, rules, assess_folder)
+    userdata_df = load_user_data(repos)
+    repo_names = load_repo_names(rules)
+    fetch_op(userdata_df, repo_names, assess_folder)

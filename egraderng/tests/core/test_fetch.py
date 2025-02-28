@@ -10,15 +10,15 @@ import re
 import pytest
 
 from egrader import eg_config
-from egrader.core.fetch import _load_repos
+from egrader.core.fetch import load_user_data
 
 
 def test_load_repos_ok(repo_file_valid):
     """Test the function to load the repos file."""
-    repos = _load_repos(repo_file_valid)
+    repos = load_user_data(repo_file_valid)
 
     assert eg_config.id_col in repos.columns
-    assert eg_config.repo_col in repos.columns
+    assert eg_config.repo_base_col in repos.columns
 
 
 def test_load_repos_ko(repo_file_invalid, required_col):
@@ -29,4 +29,4 @@ def test_load_repos_ko(repo_file_invalid, required_col):
             f"Repositories file does not contain required `{required_col}` column."
         ),
     ):
-        _load_repos(repo_file_invalid)
+        load_user_data(repo_file_invalid)
