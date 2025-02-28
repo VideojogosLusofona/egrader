@@ -28,12 +28,12 @@ def _load_repos(repos_fp: Path) -> pd.DataFrame:
     df = pd.read_csv(repos_fp)
 
     if egc.id_col not in df.columns:
-        raise ValueError(
+        raise KeyError(
             f"Repositories file does not contain required `{egc.id_col}` column."
         )
 
     if egc.repo_col not in df.columns:
-        raise ValueError(
+        raise KeyError(
             f"Repositories file does not contain required `{egc.repo_col}` column."
         )
 
