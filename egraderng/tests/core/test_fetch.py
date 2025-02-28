@@ -5,10 +5,13 @@
 """Test the core fetch operations."""
 
 
-import pytest
+from egrader import eg_config
+from egrader.core.fetch import _load_repos
 
-from egrader.core import _load_repos
 
-
-def test_load_repos(ver_opt):
+def test_load_repos(repo_file_valid):
     """Test the function to load the repos file."""
+    repos = _load_repos(repo_file_valid)
+
+    assert eg_config.id_col in repos.columns
+    assert eg_config.repo_col in repos.columns

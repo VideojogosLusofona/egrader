@@ -4,18 +4,36 @@
 
 """Fixtures to be used by test functions for core functionality."""
 
-from egrader import eg_config
+import pandas as pd
+import pytest
 
-def repo_file_valid(faker):
-    """Valid repo file."""
+
+@pytest.fixture
+def repo_data_valid_df(faker):
+    """Create valid repo data in Pandas dataframe format."""
+    # Number of rows
+    num_rows = 20
+
+    # Generate data
     data = {
-        eg_config.id_col: [],
-        eg_config.repo_col: [],
-        "email": [],
-        "name": []
+        "id": [faker.random_int(min=100000, max=999999) for _ in range(num_rows)],
+        "repo": [
+            f"https://github.com/{faker.user_name()}/{faker.word()}"
+            for _ in range(num_rows)
+        ],
+        "email": [faker.email() for _ in range(num_rows)],
+        "name": [faker.name() for _ in range(num_rows)],
     }
-    for _ in range(20): # Use faker's csv generator instead
-        data[eg_config.id_col].append(faker.)
-        data[eg_config.repo_col].append(faker.)
-        data[eg_config.email_col].append(faker.email())
-        data[eg_config.name_col].append(faker.name())
+
+    # Return DataFrame with this data
+    return pd.DataFrame(data)
+
+
+@pytest.fixture
+def repo_file_valid(repo_data_valid_df, tmp_path):
+    """Create a valid repo file."""
+    repo_file = tmp_path / "repos.csv"
+
+    repo_data_valid_df.to_csv(repo_file, index=False)
+
+    return repo_file
