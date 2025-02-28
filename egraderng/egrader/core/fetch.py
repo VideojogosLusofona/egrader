@@ -11,6 +11,7 @@ from pathlib import Path
 import pandas as pd
 
 from .config import eg_config as egc
+from .yaml import load_yaml
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +51,11 @@ def load_repo_names(rules_fp: Path) -> Sequence[str]:
     Returns:
       A sequence of repository names.
     """
-    return []
+    # Load rules file
+    repo_rules = load_yaml(rules_fp)
+
+    # And return the repositories
+    return [rule["repo"] for rule in repo_rules]
 
 
 def fetch_op(
@@ -63,4 +68,6 @@ def fetch_op(
       repo_names: Names of the repositories to fetch from each user.
       assess_fp: Assessment folder.
     """
-    logger.debug(userdata_df)
+    for repo_name in repo_names:
+        for repo_base in userdata_df[egc.repo_base_col]:
+            logger.info(repo_base + "/" + repo_name)
