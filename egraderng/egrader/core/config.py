@@ -12,4 +12,4 @@ from rich.console import Console
 eg_config = SimpleNamespace()
 eg_config.console = Console(highlight=False)
 eg_config.id_col = "id"
-eg_config.repo_col = "repo"
+eg_config.repo_base_col = "repo_base"

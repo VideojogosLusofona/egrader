@@ -19,7 +19,7 @@ def repo_data_valid_df(faker):
     # Generate data
     data = {
         egc.id_col: [faker.random_int(min=100000, max=999999) for _ in range(num_rows)],
-        egc.repo_col: [
+        egc.repo_base_col: [
             f"https://github.com/{faker.user_name()}/{faker.word()}"
             for _ in range(num_rows)
         ],
@@ -41,7 +41,7 @@ def repo_file_valid(repo_data_valid_df, tmp_path):
     return repo_file
 
 
-@pytest.fixture(params=[egc.id_col, egc.repo_col])
+@pytest.fixture(params=[egc.id_col, egc.repo_base_col])
 def required_col(request):
     """Required columns in the repos file."""
     return request.param

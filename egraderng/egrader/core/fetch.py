@@ -5,6 +5,7 @@
 """Fetch functionality."""
 
 import logging
+from collections.abc import Sequence
 from pathlib import Path
 
 import pandas as pd
@@ -14,40 +15,52 @@ from .config import eg_config as egc
 logger = logging.getLogger(__name__)
 
 
-def _load_repos(repos_fp: Path) -> pd.DataFrame:
-    """Load users and repositories from the specified CSV file.
+def load_user_data(userdata_fp: Path) -> pd.DataFrame:
+    """Load users and base repository addresses from the specified CSV file.
 
     Args:
-      repos_fp: Repositories CSV file, requires at least the `id` and `repo`
+      userdata_fp: User data CSV file, requires at least the `id` and `repo_base`
         columns.
 
     Returns:
-      pd.DataFrame: Dataframe with users, repositories, and possibly additional
-        data to be used by specific plugins.
+      Dataframe with users, repositories, and possibly additional data to be
+        used by specific plugins.
     """
-    df = pd.read_csv(repos_fp)
+    df = pd.read_csv(userdata_fp)
 
     if egc.id_col not in df.columns:
         raise KeyError(
             f"Repositories file does not contain required `{egc.id_col}` column."
         )
 
-    if egc.repo_col not in df.columns:
+    if egc.repo_base_col not in df.columns:
         raise KeyError(
-            f"Repositories file does not contain required `{egc.repo_col}` column."
+            f"Repositories file does not contain required `{egc.repo_base_col}` column."
         )
 
     return df
 
 
-def fetch_op(repos_fp: Path, rules_fp: Path, assess_fp: Path) -> None:
-    """Fetch (clone or update) the specified repositories.
+def load_repo_names(rules_fp: Path) -> Sequence[str]:
+    """Load repository names from rules file.
 
     Args:
-      repos_fp: Repositories file.
       rules_fp: Rules file.
+
+    Returns:
+      A sequence of repository names.
+    """
+    return []
+
+
+def fetch_op(
+    userdata_df: pd.DataFrame, repo_names: Sequence[str], assess_fp: Path
+) -> None:
+    """Fetch (clone or update) user repositories.
+
+    Args:
+      userdata_df: Data frame with user data, contains the base repository addresses.
+      repo_names: Names of the repositories to fetch from each user.
       assess_fp: Assessment folder.
     """
-    repos_df = _load_repos(repos_fp)
-
-    logger.debug(repos_df)
+    logger.debug(userdata_df)
