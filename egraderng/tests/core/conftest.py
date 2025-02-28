@@ -7,6 +7,8 @@
 import pandas as pd
 import pytest
 
+from egrader import eg_config as egc
+
 
 @pytest.fixture
 def repo_data_valid_df(faker):
@@ -16,8 +18,8 @@ def repo_data_valid_df(faker):
 
     # Generate data
     data = {
-        "id": [faker.random_int(min=100000, max=999999) for _ in range(num_rows)],
-        "repo": [
+        egc.id_col: [faker.random_int(min=100000, max=999999) for _ in range(num_rows)],
+        egc.repo_col: [
             f"https://github.com/{faker.user_name()}/{faker.word()}"
             for _ in range(num_rows)
         ],
@@ -35,5 +37,22 @@ def repo_file_valid(repo_data_valid_df, tmp_path):
     repo_file = tmp_path / "repos.csv"
 
     repo_data_valid_df.to_csv(repo_file, index=False)
+
+    return repo_file
+
+
+@pytest.fixture(params=[egc.id_col, egc.repo_col])
+def required_col(request):
+    """Required columns in the repos file."""
+    return request.param
+
+
+@pytest.fixture
+def repo_file_invalid(repo_data_valid_df, tmp_path, required_col):
+    """Create an invalid repo file."""
+    repo_file = tmp_path / "repos.csv"
+
+    repo_data_invalid_df = repo_data_valid_df.drop(columns=[required_col])
+    repo_data_invalid_df.to_csv(repo_file, index=False)
 
     return repo_file
