@@ -2,4 +2,4 @@
 # Licensed under the GNU General Public License v3.0 or later.
 # See <https://www.gnu.org/licenses/gpl-3.0.html> for details.
 
-"""Tests for the egrader application."""
+"""Tests for the core functionality of egrader."""
