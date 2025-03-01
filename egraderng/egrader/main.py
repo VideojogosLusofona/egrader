@@ -8,8 +8,8 @@ import importlib.metadata
 
 import typer
 
+from . import eg_config as egc
 from .cli import app
-from .core import eg_config as egc
 
 __version__ = importlib.metadata.version("egrader")
 

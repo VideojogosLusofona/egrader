@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from .config import eg_config as egc
+from ..config import eg_config as egc
 from .yaml import load_yaml
 
 logger = logging.getLogger(__name__)

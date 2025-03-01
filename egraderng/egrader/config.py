@@ -4,6 +4,8 @@
 
 """App-wide configuration."""
 
+import logging
+import os
 from types import SimpleNamespace
 
 from rich.console import Console
@@ -13,3 +15,13 @@ eg_config = SimpleNamespace()
 eg_config.console = Console(highlight=False)
 eg_config.id_col = "id"
 eg_config.repo_base_col = "repo_base"
+eg_config.log_level = os.getenv("EGRADER_LOG_LEVEL", "WARNING").upper()
+eg_config.log_format = "[%(levelname)s] (%(name)s) %(message)s"
+
+# TODO Load plugins here, so they can modify config before we proceed further
+
+# Configure logging immediately when this module is imported
+logging.basicConfig(
+    level=getattr(logging, eg_config.log_level, logging.WARNING),
+    format=eg_config.log_format,
+)
