@@ -30,13 +30,11 @@ def load_user_data(userdata_fp: Path) -> pd.DataFrame:
     df = pd.read_csv(userdata_fp, sep=None, engine="python")
 
     if egc.id_col not in df.columns:
-        raise KeyError(
-            f"Repositories file does not contain required `{egc.id_col}` column."
-        )
+        raise KeyError(f"Users file does not contain required `{egc.id_col}` column.")
 
     if egc.repo_base_col not in df.columns:
         raise KeyError(
-            f"Repositories file does not contain required `{egc.repo_base_col}` column."
+            f"Users file does not contain required `{egc.repo_base_col}` column."
         )
 
     return df

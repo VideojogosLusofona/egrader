@@ -26,7 +26,7 @@ class FetchMode(str, Enum):
 
 @app.command()
 def fetch(
-    repos: Annotated[
+    users: Annotated[
         Path,
         typer.Argument(
             help="CSV/TSV file with user IDs and respective repository links.",
@@ -94,6 +94,6 @@ def fetch(
     else:
         assess_folder.mkdir()
 
-    userdata_df = load_user_data(repos)
+    userdata_df = load_user_data(users)
     repo_names = load_repo_names(rules)
     fetch_op(userdata_df, repo_names, assess_folder)
