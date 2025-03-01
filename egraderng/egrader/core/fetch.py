@@ -27,7 +27,7 @@ def load_user_data(userdata_fp: Path) -> pd.DataFrame:
       Dataframe with users, repositories, and possibly additional data to be
         used by specific plugins.
     """
-    df = pd.read_csv(userdata_fp)
+    df = pd.read_csv(userdata_fp, sep=None, engine="python")
 
     if egc.id_col not in df.columns:
         raise KeyError(
