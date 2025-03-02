@@ -5,5 +5,6 @@
 """Core functionality."""
 
 from .fetch import fetch_op, load_repo_names, load_user_data
+from .gitcmd import git, git_at
 
-__all__ = ["fetch_op", "load_repo_names", "load_user_data"]
+__all__ = ["fetch_op", "git", "git_at", "load_repo_names", "load_user_data"]
