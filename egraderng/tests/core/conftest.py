@@ -31,12 +31,12 @@ def repo_data_valid_df(faker):
     return pd.DataFrame(data)
 
 
-@pytest.fixture
-def repo_file_valid(repo_data_valid_df, tmp_path):
+@pytest.fixture(params=[",", ";", "\t"])
+def repo_file_valid(repo_data_valid_df, tmp_path, request):
     """Create a valid repo file."""
     repo_file = tmp_path / "repos.csv"
 
-    repo_data_valid_df.to_csv(repo_file, index=False)
+    repo_data_valid_df.to_csv(repo_file, sep=request.param, index=False)
 
     return repo_file
 
