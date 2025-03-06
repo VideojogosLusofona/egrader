@@ -65,7 +65,7 @@ def git_http_server(git_repo_bare):
     thread.start()
 
     # Test runs while server is running
-    yield f"http://localhost:{server.server_address[1]}" # /{git_repo_bare.name}
+    yield f"http://localhost:{server.server_address[1]}"  # /{git_repo_bare.name}
 
     # Shutdown server
     server.shutdown()

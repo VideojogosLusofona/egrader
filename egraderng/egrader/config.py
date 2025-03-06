@@ -18,7 +18,7 @@ eg_config.repo_base_col = "repo_base"
 eg_config.log_level = os.getenv("EGRADER_LOG_LEVEL", "WARNING").upper()
 eg_config.log_format = "[%(levelname)s] (%(name)s) %(message)s"
 
-# TODO Load plugins here, so they can modify config before we proceed further
+# TODO Load mod plugins here, so they can modify config before we proceed further
 
 # Configure logging immediately when this module is imported
 logging.basicConfig(

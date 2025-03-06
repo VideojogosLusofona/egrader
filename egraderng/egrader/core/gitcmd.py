@@ -18,9 +18,7 @@ def git(*args):
         return run(cmd, capture_output=True, text=True, check=True)
 
     except CalledProcessError as cpe:
-        raise GitError(
-            f"Error executing the `{" ".join(cmd)}` command: {cpe.stderr}"
-        ) from cpe
+        raise GitError(f"Error executing the `{" ".join(cmd)}` command: {cpe.stderr}") from cpe
 
 
 def git_at(repo_path, *args):

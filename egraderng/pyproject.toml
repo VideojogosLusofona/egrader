@@ -33,6 +33,10 @@ dependencies = [
 [project.scripts]
 egrader = "egrader.main:app"
 
+[project.entry-points."egrader.loader"]
+yaml = "egrader.plugins.loader.yaml_loader:load_yaml"
+json = "egrader.plugins.loader.json_loader:load_json"
+
 [project.optional-dependencies]
 dev = [
     "black >= 25.1.0",
@@ -89,19 +93,19 @@ norecursedirs = [
 testpaths = ["egrader", "tests"]
 
 [tool.black]
-line-length = 88
+line-length = 96
 
 [tool.isort]
 # https://pycqa.github.io/isort/docs/configuration/options.html
 profile = "black"
 src_paths = [ "egrader", "tests" ]
-line_length = 88
+line_length = 96
 skip_gitignore = "True"
 
 [tool.flake8]
 extend-select = [ "B9", "C4" ]
-max-line-length = 88
-max-doc-length = 88
+max-line-length = 96
+max-doc-length = 96
 ignore = [
     "B018",
     "B907", # manually surrounded by quotes, consider using the `!r` conversion flag.

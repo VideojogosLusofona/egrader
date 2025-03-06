@@ -11,7 +11,7 @@ from pathlib import Path
 import pandas as pd
 
 from ..config import eg_config as egc
-from .yaml import load_yaml
+from ..rules_loader import load_rules
 
 logger = logging.getLogger(__name__)
 
@@ -33,9 +33,7 @@ def load_user_data(userdata_fp: Path) -> pd.DataFrame:
         raise KeyError(f"Users file does not contain required `{egc.id_col}` column.")
 
     if egc.repo_base_col not in df.columns:
-        raise KeyError(
-            f"Users file does not contain required `{egc.repo_base_col}` column."
-        )
+        raise KeyError(f"Users file does not contain required `{egc.repo_base_col}` column.")
 
     return df
 
@@ -50,15 +48,13 @@ def load_repo_names(rules_fp: Path) -> Sequence[str]:
       A sequence of repository names.
     """
     # Load rules file
-    repo_rules = load_yaml(rules_fp)
+    repo_rules = load_rules(rules_fp)
 
     # And return the repositories
     return [rule["repo"] for rule in repo_rules]
 
 
-def fetch_op(
-    userdata_df: pd.DataFrame, repo_names: Sequence[str], assess_fp: Path
-) -> None:
+def fetch_op(userdata_df: pd.DataFrame, repo_names: Sequence[str], assess_fp: Path) -> None:
     """Fetch (clone or update) user repositories.
 
     Args:

@@ -28,8 +28,7 @@ def repo_data_valid_df(faker):
     data = {
         egc.id_col: [faker.random_int(min=100000, max=999999) for _ in range(num_rows)],
         egc.repo_base_col: [
-            f"https://github.com/{faker.user_name()}/{faker.word()}"
-            for _ in range(num_rows)
+            f"https://github.com/{faker.user_name()}/{faker.word()}" for _ in range(num_rows)
         ],
         "email": [faker.email() for _ in range(num_rows)],
         "name": [faker.name() for _ in range(num_rows)],
@@ -83,9 +82,7 @@ def test_load_users_ko(repo_file_invalid, required_col):
     """Test the function to load a users and repos file without a required column."""
     with pytest.raises(
         KeyError,
-        match=re.escape(
-            f"Users file does not contain required `{required_col}` column."
-        ),
+        match=re.escape(f"Users file does not contain required `{required_col}` column."),
     ):
         load_user_data(repo_file_invalid)
 

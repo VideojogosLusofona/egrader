@@ -64,9 +64,7 @@ def fetch(
     ] = FetchMode.stop,
     wait: Annotated[
         float,
-        typer.Option(
-            "--wait", "-w", help="Time in seconds to wait between clones/pulls."
-        ),
+        typer.Option("--wait", "-w", help="Time in seconds to wait between clones/pulls."),
     ] = 0.0,
 ):
     """Fetch projects from repositories."""
@@ -77,8 +75,7 @@ def fetch(
 
         if assess_folder.is_file():
             raise typer.BadParameter(
-                f"Assessment folder `{assess_folder}` is a file. "
-                + "Only folders are allowed."
+                f"Assessment folder `{assess_folder}` is a file. " + "Only folders are allowed."
             )
 
         if mode == FetchMode.stop:
