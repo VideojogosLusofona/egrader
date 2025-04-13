@@ -69,13 +69,12 @@ dev = [
 "Documentation" = "https://videojogoslusofona.github.io/egrader/"
 "Source" = "https://github.com/VideojogosLusofona/egrader"
 
-[tool.setuptools]
-packages = [ "egrader" ]
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.mypy]
 python_version = "3.10"
 check_untyped_defs = true
-
 
 [tool.pytest.ini_options]
 minversion = "8.0"
@@ -90,7 +89,7 @@ norecursedirs = [
     ".tox",
     ".git",
     "__pycache__" ]
-testpaths = ["egrader", "tests"]
+testpaths = [ "src", "tests" ]
 
 [tool.black]
 line-length = 96
